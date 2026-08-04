@@ -370,6 +370,37 @@ const GH_PIN_KEY = 'spark-logbook-gh-pin';
 let entries = [];
 let ghUnlocked = false;
 
+// ---- Storage wrapper: uses window.storage when available (Claude artifact view),
+// falls back to in-memory only (won't persist across reloads) otherwise, e.g. if
+// this file was downloaded and opened directly in a browser instead of viewed as
+// a Claude artifact.
+const memoryFallback = {};
+const hasRealStorage = typeof window.storage !== 'undefined' && window.storage !== null;
+
+async function storageGet(key, shared) {
+  if (hasRealStorage) {
+    return await window.storage.get(key, shared);
+  }
+  return memoryFallback[key] !== undefined ? { key, value: memoryFallback[key], shared } : null;
+}
+
+async function storageSet(key, value, shared) {
+  if (hasRealStorage) {
+    return await window.storage.set(key, value, shared);
+  }
+  memoryFallback[key] = value;
+  return { key, value, shared };
+}
+
+function showStorageWarningIfNeeded() {
+  if (hasRealStorage) return;
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:#f8ded1;color:#7a2d0e;padding:10px 28px;font-size:0.8rem;border-bottom:1px solid #d8734f;';
+  banner.textContent = '⚠ Persistent storage isn\'t available in this view, so entries, PIN, and GitHub settings will only last for this browser tab and won\'t be saved after you close or reload it. Open this logbook from within Claude.ai (not as a downloaded local file) for entries to be saved automatically.';
+  document.querySelector('.sheet').prepend(banner);
+}
+
+
 function classify(text) {
   const t = (text || '').toUpperCase();
   if (t.includes('ALARM')) return 'ALARM';
@@ -395,7 +426,7 @@ function setGhStatus(msg, kind) {
 
 async function loadEntries() {
   try {
-    const result = await window.storage.get(STORAGE_KEY, false);
+    const result = await storageGet(STORAGE_KEY, false);
     entries = result && result.value ? JSON.parse(result.value) : [];
   } catch (e) {
     entries = [];
@@ -405,13 +436,14 @@ async function loadEntries() {
 
 async function saveEntries() {
   try {
-    const result = await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
-    if (!result) throw new Error('no result');
-    document.getElementById('lastSaved').textContent = 'Saved locally ' + new Date().toLocaleTimeString();
+    const result = await storageSet(STORAGE_KEY, JSON.stringify(entries), false);
+    if (!result) throw new Error('no result returned');
+    document.getElementById('lastSaved').textContent = (hasRealStorage ? 'Saved ' : 'Saved (tab-only) ') + new Date().toLocaleTimeString();
   } catch (e) {
-    setStatus('Could not save locally — your entry is shown but may not persist.', 'error');
+    setStatus('Could not save locally: ' + e.message, 'error');
   }
 }
+
 
 function render() {
   const body = document.getElementById('logBody');
@@ -491,7 +523,7 @@ document.getElementById('entryForm').addEventListener('submit', async (ev) => {
 
 async function maybeAutoSync() {
   try {
-    const result = await window.storage.get(GH_CONFIG_KEY, false);
+    const result = await storageGet(GH_CONFIG_KEY, false);
     if (!result || !result.value) return;
     const cfg = JSON.parse(result.value);
     if (!cfg.autoSync || !cfg.owner || !cfg.repo || !cfg.token) return;
@@ -536,7 +568,7 @@ async function hashPin(pin) {
 
 async function getStoredPinHash() {
   try {
-    const result = await window.storage.get(GH_PIN_KEY, false);
+    const result = await storageGet(GH_PIN_KEY, false);
     return result && result.value ? result.value : null;
   } catch (e) {
     return null;
@@ -577,16 +609,16 @@ document.getElementById('ghUnlockBtn').addEventListener('click', async () => {
     // First-time setup: this becomes the PIN
     const newHash = await hashPin(pin);
     try {
-      await window.storage.set(GH_PIN_KEY, newHash, false);
+      await storageSet(GH_PIN_KEY, newHash, false);
     } catch (e) {
-      lockStatus.textContent = 'Could not save PIN on this device.';
+      lockStatus.textContent = 'Could not save PIN: ' + e.message + (hasRealStorage ? '' : ' (open this from within Claude.ai for saving to work)');
       lockStatus.className = 'status-msg error';
       return;
     }
     ghUnlocked = true;
     document.getElementById('ghLockScreen').style.display = 'none';
     document.getElementById('ghSettingsScreen').style.display = 'block';
-    setGhStatus('PIN set. Settings unlocked.', 'ok');
+    setGhStatus(hasRealStorage ? 'PIN set. Settings unlocked.' : 'PIN set for this session only (storage unavailable). Settings unlocked.', 'ok');
     return;
   }
 
@@ -618,10 +650,10 @@ document.getElementById('ghChangePinBtn').addEventListener('click', async () => 
   if (!newPin) return;
   const newHash = await hashPin(newPin.trim());
   try {
-    await window.storage.set(GH_PIN_KEY, newHash, false);
+    await storageSet(GH_PIN_KEY, newHash, false);
     alert('PIN updated.');
   } catch (e) {
-    alert('Could not save the new PIN on this device.');
+    alert('Could not save the new PIN: ' + e.message);
   }
 });
 
@@ -636,7 +668,7 @@ document.getElementById('ghLockBtn').addEventListener('click', () => {
 // ---- GitHub sync ----
 async function loadGhConfig() {
   try {
-    const result = await window.storage.get(GH_CONFIG_KEY, false);
+    const result = await storageGet(GH_CONFIG_KEY, false);
     if (result && result.value) {
       const cfg = JSON.parse(result.value);
       document.getElementById('ghOwner').value = cfg.owner || '';
@@ -663,7 +695,7 @@ async function maybeSaveGhConfig() {
     autoSync: document.getElementById('ghAutoSync').checked
   };
   try {
-    await window.storage.set(GH_CONFIG_KEY, JSON.stringify(cfg), false);
+    await storageSet(GH_CONFIG_KEY, JSON.stringify(cfg), false);
   } catch (e) { /* non-fatal */ }
 }
 
@@ -807,6 +839,7 @@ function setDefaults() {
 }
 
 setDefaults();
+showStorageWarningIfNeeded();
 loadEntries();
 loadGhConfig();
 </script>
