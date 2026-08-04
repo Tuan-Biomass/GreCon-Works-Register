@@ -370,16 +370,31 @@ const GH_PIN_KEY = 'spark-logbook-gh-pin';
 let entries = [];
 let ghUnlocked = false;
 
-// ---- Storage wrapper: uses window.storage when available (Claude artifact view),
-// falls back to in-memory only (won't persist across reloads) otherwise, e.g. if
-// this file was downloaded and opened directly in a browser instead of viewed as
-// a Claude artifact.
+// ---- Storage wrapper: uses window.storage when available (Claude artifact view);
+// falls back to browser localStorage when this file is opened standalone (e.g.
+// downloaded and opened directly, or hosted on a shop-floor PC) so data still
+// persists on that device; falls back further to in-memory-only (tab session
+// only) if neither is available (e.g. private/incognito browsing).
 const memoryFallback = {};
 const hasRealStorage = typeof window.storage !== 'undefined' && window.storage !== null;
+
+let hasLocalStorage = false;
+try {
+  const testKey = '__spark_logbook_storage_test__';
+  localStorage.setItem(testKey, '1');
+  localStorage.removeItem(testKey);
+  hasLocalStorage = true;
+} catch (e) {
+  hasLocalStorage = false;
+}
 
 async function storageGet(key, shared) {
   if (hasRealStorage) {
     return await window.storage.get(key, shared);
+  }
+  if (hasLocalStorage) {
+    const raw = localStorage.getItem(key);
+    return raw !== null ? { key, value: raw, shared } : null;
   }
   return memoryFallback[key] !== undefined ? { key, value: memoryFallback[key], shared } : null;
 }
@@ -388,17 +403,33 @@ async function storageSet(key, value, shared) {
   if (hasRealStorage) {
     return await window.storage.set(key, value, shared);
   }
+  if (hasLocalStorage) {
+    localStorage.setItem(key, value);
+    return { key, value, shared };
+  }
   memoryFallback[key] = value;
   return { key, value, shared };
+}
+
+function storageLabel() {
+  if (hasRealStorage) return 'Saved';
+  if (hasLocalStorage) return 'Saved on this browser';
+  return 'Saved (tab-only, will be lost)';
 }
 
 function showStorageWarningIfNeeded() {
   if (hasRealStorage) return;
   const banner = document.createElement('div');
-  banner.style.cssText = 'background:#f8ded1;color:#7a2d0e;padding:10px 28px;font-size:0.8rem;border-bottom:1px solid #d8734f;';
-  banner.textContent = '⚠ Persistent storage isn\'t available in this view, so entries, PIN, and GitHub settings will only last for this browser tab and won\'t be saved after you close or reload it. Open this logbook from within Claude.ai (not as a downloaded local file) for entries to be saved automatically.';
+  if (hasLocalStorage) {
+    banner.style.cssText = 'background:#d6e2ef;color:#2d5580;padding:10px 28px;font-size:0.8rem;border-bottom:1px solid #9fb8d0;';
+    banner.textContent = 'ℹ Running as a standalone page — entries, PIN, and GitHub settings are saved in this browser on this device only (not synced elsewhere). Use the same browser on this computer to see them again.';
+  } else {
+    banner.style.cssText = 'background:#f8ded1;color:#7a2d0e;padding:10px 28px;font-size:0.8rem;border-bottom:1px solid #d8734f;';
+    banner.textContent = '⚠ No persistent storage is available at all in this view (e.g. private/incognito browsing) — entries, PIN, and GitHub settings will be lost when you close or reload this tab.';
+  }
   document.querySelector('.sheet').prepend(banner);
 }
+
 
 
 function classify(text) {
@@ -438,7 +469,7 @@ async function saveEntries() {
   try {
     const result = await storageSet(STORAGE_KEY, JSON.stringify(entries), false);
     if (!result) throw new Error('no result returned');
-    document.getElementById('lastSaved').textContent = (hasRealStorage ? 'Saved ' : 'Saved (tab-only) ') + new Date().toLocaleTimeString();
+    document.getElementById('lastSaved').textContent = storageLabel() + ' ' + new Date().toLocaleTimeString();
   } catch (e) {
     setStatus('Could not save locally: ' + e.message, 'error');
   }
@@ -611,14 +642,14 @@ document.getElementById('ghUnlockBtn').addEventListener('click', async () => {
     try {
       await storageSet(GH_PIN_KEY, newHash, false);
     } catch (e) {
-      lockStatus.textContent = 'Could not save PIN: ' + e.message + (hasRealStorage ? '' : ' (open this from within Claude.ai for saving to work)');
+      lockStatus.textContent = 'Could not save PIN: ' + e.message;
       lockStatus.className = 'status-msg error';
       return;
     }
     ghUnlocked = true;
     document.getElementById('ghLockScreen').style.display = 'none';
     document.getElementById('ghSettingsScreen').style.display = 'block';
-    setGhStatus(hasRealStorage ? 'PIN set. Settings unlocked.' : 'PIN set for this session only (storage unavailable). Settings unlocked.', 'ok');
+    setGhStatus(hasRealStorage || hasLocalStorage ? 'PIN set. Settings unlocked.' : 'PIN set for this session only (no storage available). Settings unlocked.', 'ok');
     return;
   }
 
@@ -831,7 +862,6 @@ document.getElementById('ghPullBtn').addEventListener('click', async () => {
     setGhStatus('Error: ' + err.message, 'error');
   }
 });
-
 
 function setDefaults() {
   const now = new Date();
