@@ -1,19 +1,11 @@
 [
   {
-    "id": "1785810348140",
+    "id": "1785810430703",
     "date": "2026-08-04",
     "time": "09:00",
     "operator": "Tim Rohner",
     "type": "SERVICE",
-    "event": "Replacement of West Spark Detector",
-    "comments": "Replaced West Spark Detector Due To False Alarm"
-  },
-  {
-    "id": "1785808462659",
-    "date": "2026-08-04",
-    "time": "09:00",
-    "type": "SERVICE",
-    "event": "Replacement of West Spark Detector",
+    "event": "Replaced West Spark Detector",
     "comments": "Replaced West Spark Detector Due To False Alarm"
   }
 ]
