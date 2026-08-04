@@ -1,842 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GreCon Operations Logbook — Albioma</title>
-  <!-- SheetJS for Excel Export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub Auto-Fill Registration</title>
+  
   <style>
-    :root {
-      --ink: #1c2430;
-      --paper: #fdfbf7;
-      --panel-bg: #f4f1ea;
-      --line: #d2cbbe;
-      --accent: #b54a24;
-      --accent-hover: #963b1a;
-      --header-bg: #18281d;
-      --green: #3d6e30;
-      --green-hover: #2f5625;
-      --radius: 4px;
-      --font-mono: 'Cascadia Code', 'Fira Code', 'Courier New', Consolas, monospace;
-    }
-
-    * { box-sizing: border-box; }
-
     body {
-      margin: 0;
-      font-family: var(--font-mono);
-      background: #e5e0d3;
-      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
-      padding: 20px 12px 40px;
-    }
-
-    .sheet {
-      max-width: 1100px;
-      margin: 0 auto;
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      overflow: hidden;
-      position: relative;
-    }
-
-    header {
-      background: var(--header-bg);
-      color: #f4f1ea;
-      padding: 18px 24px;
-      border-bottom: 4px solid var(--green);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    header img.logo {
-      height: 42px;
-      background: #ffffff;
-      padding: 4px 8px;
-      border-radius: var(--radius);
-      object-fit: contain;
-    }
-
-    header .titles h1 {
-      margin: 0 0 2px;
-      font-size: 1.3rem;
-      letter-spacing: 0.5px;
-      font-weight: 700;
-    }
-
-    header .titles p {
       margin: 0;
-      color: #a4b8ab;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
     }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 12px 24px;
-      background: var(--panel-bg);
-      border-bottom: 1px solid var(--line);
-      align-items: center;
-    }
-
-    .toolbar input, .toolbar select {
-      font-family: inherit;
-      padding: 7px 10px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--paper);
-      font-size: 0.85rem;
-      color: var(--ink);
-    }
-
-    .toolbar .spacer { flex: 1; }
-
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      padding: 8px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      border-radius: var(--radius);
-      transition: background-color 0.15s ease, opacity 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
-
-    .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
-    .btn-ghost:hover:not(:disabled) { background: #e6e0d2; }
-
-    .btn-danger { 
-      background: transparent; 
-      color: var(--accent); 
-      border: 1px solid var(--accent); 
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      line-height: 1.2;
-    }
-    .btn-danger:hover:not(:disabled) { 
-      background: var(--accent); 
-      color: #fff; 
-    }
-
-    .btn-git { background: var(--green); color: #fff; }
-    .btn-git:hover:not(:disabled) { background: var(--green-hover); }
-
-    /* GitHub Settings Panel */
-    .gh-panel {
-      display: none;
-      padding: 16px 24px;
-      background: #eaefe7;
-      border-bottom: 2px solid var(--line);
-    }
-    .gh-panel.open { display: block; }
-    .gh-panel h3 { margin: 0 0 12px; font-size: 0.95rem; color: var(--header-bg); }
-
-    .gh-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .gh-grid label { font-size: 0.68rem; text-transform: uppercase; color: #555; display: block; margin-bottom: 4px; font-weight: bold; }
-    .gh-grid input {
-      width: 100%; padding: 7px 9px; font-family: inherit; border: 1px solid var(--line); border-radius: var(--radius); font-size: 0.82rem; background: #fff;
-    }
-    .gh-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .gh-note { font-size: 0.72rem; color: #555; margin-top: 10px; line-height: 1.4; }
-    .gh-note a { color: var(--green); text-decoration: underline; }
-    .checkbox-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; user-select: none; }
-
-    /* Form Section */
-    form.entry-form {
-      display: grid;
-      grid-template-columns: 130px 95px 130px 1.4fr 1.4fr auto;
-      gap: 10px;
-      padding: 16px 24px;
-      background: #fff;
-      border-bottom: 2px solid var(--line);
-      align-items: end;
-    }
-    form.entry-form label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #666;
-      display: block;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-    form.entry-form input, form.entry-form select, form.entry-form textarea {
-      width: 100%;
-      padding: 7px 9px;
-      font-family: inherit;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      font-size: 0.85rem;
-      background: var(--paper);
-      color: var(--ink);
-    }
-    form.entry-form textarea { min-height: 38px; resize: vertical; }
-
-    /* Table Styling */
-    .table-wrapper { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-    thead th {
-      text-align: left;
-      background: #eae5d7;
-      padding: 10px 12px;
-      border-bottom: 2px solid var(--line);
-      text-transform: uppercase;
-      font-size: 0.7rem;
-      letter-spacing: 0.5px;
-      color: #555;
-      position: sticky;
-      top: 0;
-    }
-    tbody td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--line);
-      vertical-align: middle;
-      word-break: break-word;
-    }
-    tbody tr:hover { background: #f5f1e6; }
-    td.col-date, td.col-time { white-space: nowrap; color: #555; }
-    td.col-comments { color: #555; font-style: italic; }
-    td.col-actions { text-align: right; white-space: nowrap; }
-
-    /* Event Tags */
-    .tag {
-      display: inline-block;
-      padding: 2px 7px;
-      font-size: 0.68rem;
-      font-weight: bold;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      border-radius: 3px;
-    }
-    .tag-ALARM   { background: #f8dcd0; color: #a83812; }
-    .tag-FAULT   { background: #fbe8b5; color: #7a5c00; }
-    .tag-TEST    { background: #d7e8d0; color: #2c591d; }
-    .tag-SERVICE { background: #d4e3f3; color: #1e4570; }
-    .tag-RESET   { background: #ebdcf5; color: #522d73; }
-    .tag-NOTE    { background: #e3decb; color: #4a463d; }
-
-    .empty-state { padding: 48px 20px; text-align: center; color: #777; }
-    
-    /* Confirmation Modal Styling */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(24, 40, 29, 0.6);
-      backdrop-filter: blur(2px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 10000;
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .modal-box {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      width: 100%;
-      max-width: 420px;
+    .form-card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
       padding: 24px;
-      transform: translateY(-10px);
-      transition: transform 0.2s ease;
-    }
-    .modal-overlay.active .modal-box {
-      transform: translateY(0);
-    }
-    .modal-box h4 {
-      margin: 0 0 10px;
-      font-size: 1.05rem;
-      color: var(--accent);
-    }
-    .modal-box p {
-      margin: 0 0 20px;
-      font-size: 0.85rem;
-      color: var(--ink);
-      line-height: 1.4;
-    }
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
 
-    /* Notification Toast */
-    .toast-msg {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 18px;
-      border-radius: var(--radius);
-      font-size: 0.82rem;
-      font-weight: bold;
-      color: #fff;
-      background: #222;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.25s ease;
-      z-index: 9999;
-      pointer-events: none;
+    .form-group {
+      margin-bottom: 16px;
     }
-    .toast-msg.show { opacity: 1; transform: translateY(0); }
-    .toast-msg.ok { background: var(--green); }
-    .toast-msg.error { background: var(--accent); }
 
-    footer {
-      padding: 12px 24px;
-      font-size: 0.75rem;
-      color: #666;
-      background: var(--panel-bg);
-      border-top: 1px solid var(--line);
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #58a6ff;
+      box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.3);
+    }
+
+    .avatar-preview {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .count-badge {
-      background: var(--green);
-      color: #fff;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.7rem;
-      font-weight: bold;
+      gap: 12px;
+      margin-top: 12px;
     }
 
-    @media (max-width: 850px) {
-      form.entry-form { grid-template-columns: 1fr 1fr; }
-      form.entry-form div:nth-child(4), form.entry-form div:nth-child(5) { grid-column: span 2; }
-      form.entry-form div:last-child { grid-column: span 2; }
+    .avatar-preview img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid #30363d;
+      display: none;
     }
+
+    .status-msg {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .status-msg.error { color: #f85149; }
+    .status-msg.success { color: #3fb950; }
   </style>
 </head>
 <body>
 
-<div class="sheet">
-  <header>
-    <img class="logo" alt="GreCon / Albioma Logo" src="logo.png" />
-    <div class="titles">
-      <h1>GreCon Operations Logbook</h1>
-      <p>Albioma Biomass Plant Operations</p>
-    </div>
-  </header>
-
-  <div class="toolbar">
-    <input type="text" id="searchInput" placeholder="Search events or notes..." oninput="renderTable()">
-    <select id="typeFilter" onchange="renderTable()">
-      <option value="ALL">All Event Types</option>
-      <option value="ALARM">Alarm</option>
-      <option value="FAULT">Fault</option>
-      <option value="TEST">Test</option>
-      <option value="SERVICE">Service</option>
-      <option value="RESET">Reset</option>
-      <option value="NOTE">Note</option>
-    </select>
+  <div class="form-card">
+    <h2>User Registration</h2>
     
-    <div class="spacer"></div>
-
-    <button class="btn-ghost" onclick="exportToExcel()">Export Excel</button>
-    <button class="btn-ghost" onclick="exportJSON()">Backup JSON</button>
-    <button class="btn-ghost" onclick="document.getElementById('importFile').click()">Import JSON</button>
-    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
-    <button class="btn-git" onclick="toggleGithubPanel()">🔒 GitHub Settings</button>
-  </div>
-
-  <div class="gh-panel" id="githubPanel">
-    <h3>GitHub Sync Configuration</h3>
-    <div class="gh-grid">
-      <div>
-        <label for="ghToken">🔒 Personal Access Token</label>
-        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
-      </div>
-      <div>
-        <label for="ghRepo">Repository (owner/repo)</label>
-        <input type="text" id="ghRepo" placeholder="username/logbook-repo">
-      </div>
-      <div>
-        <label for="ghBranch">Branch</label>
-        <input type="text" id="ghBranch" value="main">
-      </div>
-      <div>
-        <label for="ghPath">File Path</label>
-        <input type="text" id="ghPath" value="data/logbook.json">
-      </div>
+    <!-- GitHub Username Search Input -->
+    <div class="form-group">
+      <label for="githubUsername">GitHub Username</label>
+      <input type="text" id="githubUsername" placeholder="e.g. octocat">
+      <div id="statusMsg" class="status-msg"></div>
     </div>
-    <div class="gh-actions">
-      <button class="btn-primary" onclick="saveGithubSettings()">Save Configuration</button>
-      <button class="btn-ghost" onclick="changePin()">Change PIN</button>
-      <button class="btn-git" onclick="pullFromGithub()">Pull from GitHub</button>
-      <button class="btn-git" onclick="pushToGithub()">Push to GitHub</button>
-      <label class="checkbox-row">
-        <input type="checkbox" id="autoSync" onchange="toggleAutoSync()" checked> Auto-push on new entries
-      </label>
+
+    <!-- Auto-populated Name Input -->
+    <div class="form-group">
+      <label for="fullName">Name</label>
+      <input type="text" id="fullName" placeholder="Full name will populate here...">
     </div>
-    <div class="gh-note">
-      Requires a GitHub Personal Access Token with <code>repo</code> write permissions. <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Generate Token</a>
+
+    <!-- Optional Avatar Display -->
+    <div class="avatar-preview">
+      <img id="userAvatar" src="" alt="GitHub User Avatar">
+      <span id="userBio" style="font-size: 12px; color: #8b949e;"></span>
     </div>
   </div>
 
-  <form class="entry-form" id="logForm" onsubmit="addEntry(event)">
-    <div>
-      <label for="entryDate">Date</label>
-      <input type="date" id="entryDate" required>
-    </div>
-    <div>
-      <label for="entryTime">Time</label>
-      <input type="time" id="entryTime" required>
-    </div>
-    <div>
-      <label for="entryType">Type</label>
-      <select id="entryType" required>
-        <option value="ALARM">Alarm</option>
-        <option value="FAULT">Fault</option>
-        <option value="TEST">Test</option>
-        <option value="SERVICE">Service</option>
-        <option value="RESET">Reset</option>
-        <option value="NOTE" selected>Note</option>
-      </select>
-    </div>
-    <div>
-      <label for="entryEvent">Event Details</label>
-      <textarea id="entryEvent" placeholder="Describe event or action..." required></textarea>
-    </div>
-    <div>
-      <label for="entryComments">Comments / Notes</label>
-      <textarea id="entryComments" placeholder="Additional observations..."></textarea>
-    </div>
-    <div>
-      <button type="submit" class="btn-primary">Add Entry</button>
-    </div>
-  </form>
+  <script>
+    const usernameInput = document.getElementById('githubUsername');
+    const nameInput = document.getElementById('fullName');
+    const avatarImg = document.getElementById('userAvatar');
+    const bioText = document.getElementById('userBio');
+    const statusMsg = document.getElementById('statusMsg');
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 110px;">Date</th>
-          <th style="width: 80px;">Time</th>
-          <th style="width: 100px;">Type</th>
-          <th>Event Details</th>
-          <th>Comments</th>
-          <th style="width: 90px; text-align: right;">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="logTableBody">
-        <!-- Dynamic Rows -->
-      </tbody>
-    </table>
-  </div>
+    let debounceTimer;
 
-  <div id="emptyState" class="empty-state" style="display: none;">
-    No log entries found. Add a new entry above or adjust search filters.
-  </div>
+    // Debounce listener to avoid hitting GitHub API rate limits on every keypress
+    usernameInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const username = usernameInput.value.trim();
 
-  <footer>
-    <div>
-      Total Entries: <span class="count-badge" id="entryCount">0</span>
-    </div>
-    <div>
-      System: GreCon Spark Extinction & Fire Protection | Albioma Plant Ops
-    </div>
-  </footer>
-</div>
+      if (!username) {
+        resetForm();
+        return;
+      }
 
-<!-- Delete Confirmation Modal -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal-box">
-    <h4>Confirm Deletion</h4>
-    <p>Are you sure you want to permanently delete this logbook entry?</p>
-    <div class="modal-actions">
-      <button class="btn-ghost" onclick="closeDeleteModal()">Cancel</button>
-      <button class="btn-primary" id="confirmDeleteBtn">Delete Entry</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast-msg" id="toast"></div>
-
-<script>
-  let logData = JSON.parse(localStorage.getItem('grecon_logs') || '[]');
-  let pendingDeleteId = null;
-
-  function setFormDefaults() {
-    const now = new Date();
-    document.getElementById('entryDate').value = now.toISOString().split('T')[0];
-    document.getElementById('entryTime').value = now.toTimeString().split(' ')[0].substring(0, 5);
-  }
-
-  function saveLogsLocally() {
-    logData.sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
-    localStorage.setItem('grecon_logs', JSON.stringify(logData));
-    renderTable();
-  }
-
-  function addEntry(e) {
-    e.preventDefault();
-    const newEntry = {
-      id: Date.now().toString(),
-      date: document.getElementById('entryDate').value,
-      time: document.getElementById('entryTime').value,
-      type: document.getElementById('entryType').value,
-      event: document.getElementById('entryEvent').value.trim(),
-      comments: document.getElementById('entryComments').value.trim()
-    };
-
-    logData.unshift(newEntry);
-    saveLogsLocally();
-
-    document.getElementById('entryEvent').value = '';
-    document.getElementById('entryComments').value = '';
-    setFormDefaults();
-    showToast('Entry added successfully.', 'ok');
-
-    if (document.getElementById('autoSync').checked) {
-      pushToGithub(true);
-    }
-  }
-
-  /* Modal-Based Deletion Logic */
-  function confirmDelete(id) {
-    pendingDeleteId = id;
-    document.getElementById('deleteModal').classList.add('active');
-  }
-
-  function closeDeleteModal() {
-    pendingDeleteId = null;
-    document.getElementById('deleteModal').classList.remove('active');
-  }
-
-  document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-    if (pendingDeleteId) {
-      logData = logData.filter(item => item.id !== pendingDeleteId);
-      saveLogsLocally();
-      showToast('Entry deleted.', 'ok');
-      closeDeleteModal();
-    }
-  });
-
-  function renderTable() {
-    const tbody = document.getElementById('logTableBody');
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const typeFilter = document.getElementById('typeFilter').value;
-    const emptyState = document.getElementById('emptyState');
-
-    tbody.innerHTML = '';
-
-    const filtered = logData.filter(item => {
-      const matchesSearch = item.event.toLowerCase().includes(search) ||
-                            item.comments.toLowerCase().includes(search) ||
-                            item.date.includes(search);
-      const matchesType = typeFilter === 'ALL' || item.type === typeFilter;
-      return matchesSearch && matchesType;
+      debounceTimer = setTimeout(() => {
+        fetchGitHubUserData(username);
+      }, 500); // Waits 500ms after user stops typing
     });
 
-    document.getElementById('entryCount').innerText = filtered.length;
+    async function fetchGitHubUserData(username) {
+      statusMsg.textContent = 'Fetching GitHub data...';
+      statusMsg.className = 'status-msg';
 
-    if (filtered.length === 0) {
-      emptyState.style.display = 'block';
-      return;
-    } else {
-      emptyState.style.display = 'none';
-    }
-
-    filtered.forEach(item => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="col-date">${escapeHtml(item.date)}</td>
-        <td class="col-time">${escapeHtml(item.time)}</td>
-        <td><span class="tag tag-${item.type}">${item.type}</span></td>
-        <td class="col-event">${escapeHtml(item.event)}</td>
-        <td class="col-comments">${escapeHtml(item.comments || '-')}</td>
-        <td class="col-actions">
-          <button class="btn-danger" onclick="confirmDelete('${item.id}')">Delete</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  function escapeHtml(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  }
-
-  let toastTimer;
-  function showToast(msg, type = 'ok') {
-    const toast = document.getElementById('toast');
-    toast.innerText = msg;
-    toast.className = `toast-msg show ${type}`;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-      toast.className = 'toast-msg';
-    }, 3500);
-  }
-
-  /* File Export / Import */
-  function exportToExcel() {
-    if (logData.length === 0) {
-      showToast('No data available to export.', 'error');
-      return;
-    }
-    const exportData = logData.map(item => ({
-      Date: item.date,
-      Time: item.time,
-      Type: item.type,
-      'Event Details': item.event,
-      Comments: item.comments
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "GreCon Logbook");
-    XLSX.writeFile(wb, `GreCon_Logbook_${new Date().toISOString().split('T')[0]}.xlsx`);
-    showToast('Exported Excel spreadsheet.', 'ok');
-  }
-
-  function exportJSON() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logData, null, 2));
-    const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `grecon_logbook_backup_${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(dlAnchor);
-    dlAnchor.click();
-    dlAnchor.remove();
-    showToast('JSON backup downloaded.', 'ok');
-  }
-
-  function importJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
       try {
-        const importedData = JSON.parse(e.target.result);
-        if (Array.isArray(importedData)) {
-          logData = importedData;
-          saveLogsLocally();
-          showToast('Successfully imported log entries.', 'ok');
-        } else {
-          showToast('Invalid JSON format: expected an array.', 'error');
+        const response = await fetch(`https://api.github.com/users/${username}`);
+        
+        if (!response.ok) {
+          throw new Error('User not found');
         }
+
+        const data = await response.json();
+
+        // Populate fields
+        // Fallback to login handle if full name isn't set on their GitHub profile
+        nameInput.value = data.name || data.login; 
+        
+        if (data.avatar_url) {
+          avatarImg.src = data.avatar_url;
+          avatarImg.style.display = 'block';
+        }
+
+        if (data.bio) {
+          bioText.textContent = data.bio;
+        }
+
+        statusMsg.textContent = 'Data pulled successfully!';
+        statusMsg.className = 'status-msg success';
+
       } catch (err) {
-        showToast('Failed to parse JSON file.', 'error');
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  /* PIN Security Logic */
-  function authenticatePin() {
-    let savedPin = localStorage.getItem('gh_settings_pin');
-    if (!savedPin) {
-      const newPin = prompt('Set a 4-digit security PIN to protect GitHub Settings:');
-      if (newPin && newPin.trim().length >= 4) {
-        localStorage.setItem('gh_settings_pin', newPin.trim());
-        showToast('Security PIN saved successfully.', 'ok');
-        return true;
-      } else {
-        showToast('PIN setup cancelled or too short.', 'error');
-        return false;
-      }
-    } else {
-      const enteredPin = prompt('Enter Security PIN to unlock GitHub Settings:');
-      if (enteredPin === savedPin) {
-        return true;
-      } else {
-        showToast('Incorrect PIN!', 'error');
-        return false;
+        statusMsg.textContent = 'GitHub user not found.';
+        statusMsg.className = 'status-msg error';
+        avatarImg.style.display = 'none';
+        bioText.textContent = '';
       }
     }
-  }
 
-  function changePin() {
-    let savedPin = localStorage.getItem('gh_settings_pin');
-    const currentInput = prompt('Enter CURRENT Security PIN:');
-    if (currentInput === savedPin) {
-      const newPin = prompt('Enter NEW 4-digit Security PIN:');
-      if (newPin && newPin.trim().length >= 4) {
-        localStorage.setItem('gh_settings_pin', newPin.trim());
-        showToast('Security PIN changed.', 'ok');
-      } else {
-        showToast('Invalid PIN provided.', 'error');
-      }
-    } else {
-      showToast('Incorrect current PIN.', 'error');
+    function resetForm() {
+      nameInput.value = '';
+      avatarImg.style.display = 'none';
+      bioText.textContent = '';
+      statusMsg.textContent = '';
     }
-  }
+  </script>
 
-  /* GitHub Integration */
-  function toggleGithubPanel() {
-    const panel = document.getElementById('githubPanel');
-    if (!panel.classList.contains('open')) {
-      if (authenticatePin()) {
-        panel.classList.add('open');
-      }
-    } else {
-      panel.classList.remove('open');
-    }
-  }
-
-  function loadGithubSettings() {
-    document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-    document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
-    document.getElementById('ghBranch').value = localStorage.getItem('gh_branch') || 'main';
-    document.getElementById('ghPath').value = localStorage.getItem('gh_path') || 'data/logbook.json';
-    
-    const storedAutoSync = localStorage.getItem('gh_autosync');
-    document.getElementById('autoSync').checked = storedAutoSync === null ? true : (storedAutoSync === 'true');
-  }
-
-  function saveGithubSettings() {
-    localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
-    localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
-    localStorage.setItem('gh_branch', document.getElementById('ghBranch').value.trim());
-    localStorage.setItem('gh_path', document.getElementById('ghPath').value.trim());
-    showToast('GitHub settings saved.', 'ok');
-  }
-
-  function toggleAutoSync() {
-    localStorage.setItem('gh_autosync', document.getElementById('autoSync').checked);
-  }
-
-  function utf8ToBase64(str) {
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
-  }
-
-  function base64ToUtf8(str) {
-    return decodeURIComponent(Array.prototype.map.call(atob(str), c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-  }
-
-  async function pushToGithub(isAutoSync = false) {
-    const token = localStorage.getItem('gh_token');
-    const repo = localStorage.getItem('gh_repo');
-    const branch = localStorage.getItem('gh_branch') || 'main';
-    const path = localStorage.getItem('gh_path') || 'data/logbook.json';
-
-    if (!token || !repo) {
-      if (!isAutoSync) {
-        showToast('Missing GitHub token or repository setting.', 'error');
-      }
-      return;
-    }
-
-    showToast(isAutoSync ? 'Auto-syncing entry to GitHub...' : 'Pushing to GitHub...', 'ok');
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-    try {
-      let sha = null;
-      const getRes = await fetch(`${url}?ref=${branch}`, {
-        headers: { 'Authorization': `token ${token}` }
-      });
-
-      if (getRes.ok) {
-        const fileInfo = await getRes.json();
-        sha = fileInfo.sha;
-      }
-
-      const contentStr = JSON.stringify(logData, null, 2);
-      const bodyData = {
-        message: `Update GreCon logbook [${new Date().toISOString()}]`,
-        content: utf8ToBase64(contentStr),
-        branch: branch
-      };
-      if (sha) bodyData.sha = sha;
-
-      const putRes = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-      });
-
-      if (putRes.ok) {
-        showToast(isAutoSync ? 'Entry auto-pushed to GitHub!' : 'Successfully pushed to GitHub repository!', 'ok');
-      } else {
-        const err = await putRes.json();
-        showToast(`GitHub Push Failed: ${err.message}`, 'error');
-      }
-    } catch (e) {
-      showToast(`GitHub API Error: ${e.message}`, 'error');
-    }
-  }
-
-  async function pullFromGithub() {
-    const token = localStorage.getItem('gh_token');
-    const repo = localStorage.getItem('gh_repo');
-    const branch = localStorage.getItem('gh_branch') || 'main';
-    const path = localStorage.getItem('gh_path') || 'data/logbook.json';
-
-    if (!repo) {
-      showToast('Missing GitHub repository setting.', 'error');
-      return;
-    }
-
-    showToast('Pulling latest logs from GitHub...', 'ok');
-    const url = `https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`;
-
-    try {
-      const headers = token ? { 'Authorization': `token ${token}` } : {};
-      const res = await fetch(url, { headers });
-
-      if (res.ok) {
-        const fileData = await res.json();
-        const jsonContent = base64ToUtf8(fileData.content.replace(/\n/g, ''));
-        const remoteLogs = JSON.parse(jsonContent);
-
-        if (Array.isArray(remoteLogs)) {
-          logData = remoteLogs;
-          saveLogsLocally();
-          showToast('Logbook updated from GitHub.', 'ok');
-        } else {
-          showToast('Remote file format is invalid.', 'error');
-        }
-      } else {
-        const err = await res.json();
-        showToast(`GitHub Pull Failed: ${err.message}`, 'error');
-      }
-    } catch (e) {
-      showToast(`GitHub API Error: ${e.message}`, 'error');
-    }
-  }
-
-  // Initial Startup
-  setFormDefaults();
-  loadGithubSettings();
-  renderTable();
-</script>
 </body>
 </html>
