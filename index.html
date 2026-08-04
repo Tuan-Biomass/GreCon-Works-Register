@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GreCon Operations Logbook —Tuan Biomass</title>
+  <title>GreCon Operations Logbook — Tuan Biomass</title>
   <!-- SheetJS for Excel Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -351,7 +351,7 @@
     <img class="logo" alt="GreCon / Albioma Logo" src="logo.png" />
     <div class="titles">
       <h1>GreCon Operations Logbook</h1>
-      <p>Tuan Biomass Biomass Plant Operations</p>
+      <p>Tuan Biomass Plant Operations</p>
     </div>
   </header>
 
@@ -370,7 +370,7 @@
     <div class="spacer"></div>
 
     <button class="btn-ghost" onclick="exportToExcel()">Export Excel</button>
-    <button class="btn-git" onclick="toggleGithubPanel()">🔒 GitHub & Backup Settings</button>
+    <button class="btn-git" id="gitSettingsBtn" onclick="toggleGithubPanel()">🔒 GitHub & Backup Settings</button>
   </div>
 
   <div class="gh-panel" id="githubPanel">
@@ -504,6 +504,7 @@
 <script>
   let logData = JSON.parse(localStorage.getItem('grecon_logs') || '[]');
   let pendingDeleteId = null;
+  let githubPanelUnlocked = false;
 
   function setFormDefaults() {
     const now = new Date();
@@ -512,9 +513,17 @@
   }
 
   function saveLogsLocally() {
-    logData.sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
+    logData = mergeLogs(logData, []); // Sorts and deduplicates
     localStorage.setItem('grecon_logs', JSON.stringify(logData));
     renderTable();
+  }
+
+  function mergeLogs(local, remote) {
+    const map = new Map();
+    [...local, ...remote].forEach(item => {
+      if (item && item.id) map.set(item.id, item);
+    });
+    return Array.from(map.values()).sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
   }
 
   function addEntry(e) {
@@ -543,8 +552,17 @@
     }
   }
 
-  /* Modal-Based Deletion Logic */
+  /* Protected Deletion Logic */
   function confirmDelete(id) {
+    if (!githubPanelUnlocked) {
+      if (authenticatePin()) {
+        githubPanelUnlocked = true;
+        document.getElementById('gitSettingsBtn').innerText = '🔓 GitHub & Backup Settings';
+      } else {
+        showToast('Settings must be unlocked to delete entries.', 'error');
+        return;
+      }
+    }
     pendingDeleteId = id;
     document.getElementById('deleteModal').classList.add('active');
   }
@@ -560,6 +578,9 @@
       saveLogsLocally();
       showToast('Entry deleted.', 'ok');
       closeDeleteModal();
+      if (document.getElementById('autoSync').checked) {
+        pushToGithub(true);
+      }
     }
   });
 
@@ -663,7 +684,7 @@
       try {
         const importedData = JSON.parse(e.target.result);
         if (Array.isArray(importedData)) {
-          logData = importedData;
+          logData = mergeLogs(logData, importedData);
           saveLogsLocally();
           showToast('Successfully imported log entries.', 'ok');
         } else {
@@ -719,9 +740,13 @@
   /* GitHub Integration */
   function toggleGithubPanel() {
     const panel = document.getElementById('githubPanel');
+    const btn = document.getElementById('gitSettingsBtn');
+
     if (!panel.classList.contains('open')) {
-      if (authenticatePin()) {
+      if (githubPanelUnlocked || authenticatePin()) {
+        githubPanelUnlocked = true;
         panel.classList.add('open');
+        btn.innerText = '🔓 GitHub & Backup Settings';
       }
     } else {
       panel.classList.remove('open');
@@ -776,6 +801,7 @@
 
     try {
       let sha = null;
+      let remoteLogs = [];
       const getRes = await fetch(`${url}?ref=${branch}`, {
         headers: { 'Authorization': `token ${token}` }
       });
@@ -783,7 +809,13 @@
       if (getRes.ok) {
         const fileInfo = await getRes.json();
         sha = fileInfo.sha;
+        const jsonContent = base64ToUtf8(fileInfo.content.replace(/\n/g, ''));
+        remoteLogs = JSON.parse(jsonContent);
       }
+
+      // Merge remote logs before pushing to prevent overwriting
+      logData = mergeLogs(logData, remoteLogs);
+      saveLogsLocally();
 
       const contentStr = JSON.stringify(logData, null, 2);
       const bodyData = {
@@ -813,18 +845,18 @@
     }
   }
 
-  async function pullFromGithub() {
+  async function pullFromGithub(isSilent = false) {
     const token = localStorage.getItem('gh_token');
     const repo = localStorage.getItem('gh_repo');
     const branch = localStorage.getItem('gh_branch') || 'main';
     const path = localStorage.getItem('gh_path') || 'data/logbook.json';
 
     if (!repo) {
-      showToast('Missing GitHub repository setting.', 'error');
+      if (!isSilent) showToast('Missing GitHub repository setting.', 'error');
       return;
     }
 
-    showToast('Pulling latest logs from GitHub...', 'ok');
+    if (!isSilent) showToast('Pulling latest logs from GitHub...', 'ok');
     const url = `https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`;
 
     try {
@@ -837,25 +869,31 @@
         const remoteLogs = JSON.parse(jsonContent);
 
         if (Array.isArray(remoteLogs)) {
-          logData = remoteLogs;
+          logData = mergeLogs(logData, remoteLogs);
           saveLogsLocally();
-          showToast('Logbook updated from GitHub.', 'ok');
+          if (!isSilent) showToast('Logbook updated from GitHub.', 'ok');
         } else {
-          showToast('Remote file format is invalid.', 'error');
+          if (!isSilent) showToast('Remote file format is invalid.', 'error');
         }
       } else {
         const err = await res.json();
-        showToast(`GitHub Pull Failed: ${err.message}`, 'error');
+        if (!isSilent) showToast(`GitHub Pull Failed: ${err.message}`, 'error');
       }
     } catch (e) {
-      showToast(`GitHub API Error: ${e.message}`, 'error');
+      if (!isSilent) showToast(`GitHub API Error: ${e.message}`, 'error');
     }
   }
 
   // Initial Startup
-  setFormDefaults();
-  loadGithubSettings();
-  renderTable();
+  async function init() {
+    setFormDefaults();
+    loadGithubSettings();
+    renderTable();
+    // Auto-pull from GitHub on page open
+    await pullFromGithub(true);
+  }
+
+  init();
 </script>
 </body>
 </html>
