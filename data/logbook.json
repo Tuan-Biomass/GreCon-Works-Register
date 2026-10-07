@@ -1,5 +1,41 @@
 [
   {
+    "id": "1791334157491",
+    "date": "2026-10-07",
+    "time": "10:28",
+    "operator": "Tim Rohner",
+    "type": "FAULT",
+    "event": "Broken wire Solenoid Output Zone 1 Burner fuel",
+    "comments": ""
+  },
+  {
+    "id": "1791332920171",
+    "date": "2026-10-07",
+    "time": "10:27",
+    "operator": "Tim Rohner",
+    "type": "SERVICE",
+    "event": "Cleaned Valve Contacts",
+    "comments": "Re: broken Wire Removed Herschman plug And Cleaned Contacts Tested OK"
+  },
+  {
+    "id": "1791331086063",
+    "date": "2026-10-06",
+    "time": "09:57",
+    "operator": "Tim Rohner",
+    "type": "SERVICE",
+    "event": "Replaced Switch tested OK",
+    "comments": "RE:Zone 1 burner Fuel flow switch fault"
+  },
+  {
+    "id": "1791331051696",
+    "date": "2026-10-06",
+    "time": "09:56",
+    "operator": "Tim Rohner",
+    "type": "FAULT",
+    "event": "Zone 1 burner Fuel flow switch fault",
+    "comments": ""
+  },
+  {
     "id": "1785878478598",
     "date": "2026-08-04",
     "time": "10:30",
