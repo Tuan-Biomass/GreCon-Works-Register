@@ -342,6 +342,165 @@
       form.entry-form div:nth-child(5), form.entry-form div:nth-child(6) { grid-column: span 2; }
       form.entry-form div:last-child { grid-column: span 2; }
     }
+
+    /* ===== Tabs ===== */
+    .tabs {
+      display: flex;
+      gap: 2px;
+      padding: 0 24px;
+      background: #ece7da;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: transparent;
+      color: #555;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 12px 18px;
+      border-bottom: 3px solid transparent;
+      font-size: 0.82rem;
+    }
+    .tab-btn:hover { background: #e3ddcd; }
+    .tab-btn.active {
+      background: var(--paper);
+      color: var(--header-bg);
+      border-bottom-color: var(--accent);
+    }
+    .tab-btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 1px;
+    }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ===== Stock ===== */
+    .tag-OK  { background: #d7e8d0; color: #2c591d; }
+    .tag-LOW { background: #fbe8b5; color: #7a5c00; }
+    .tag-OUT { background: #f8dcd0; color: #a83812; }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      background: var(--paper);
+    }
+    .stat strong { font-size: 1rem; margin-right: 4px; }
+    .stat.warn strong { color: #7a5c00; }
+    .stat.bad strong { color: var(--accent); }
+
+    td.col-num, th.col-num { text-align: right; white-space: nowrap; }
+    td.col-qty { text-align: right; font-weight: bold; white-space: nowrap; }
+
+    form.stock-form {
+      display: grid;
+      grid-template-columns: 110px 1.6fr 1fr 1fr 80px 90px 90px auto;
+      gap: 10px;
+      padding: 16px 24px;
+      background: #fff;
+      border-bottom: 2px solid var(--line);
+      align-items: end;
+    }
+    form.stock-form label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      display: block;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    form.stock-form input {
+      width: 100%;
+      padding: 7px 9px;
+      font-family: inherit;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    form.stock-form .form-actions { display: flex; gap: 8px; }
+
+    .count-cell { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
+    .count-input {
+      width: 82px;
+      padding: 5px 7px;
+      text-align: right;
+      font-family: inherit;
+      font-size: 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+    }
+    .qty-btn { padding: 4px 9px; font-size: 0.9rem; line-height: 1.1; }
+    .unit-label { color: #666; font-size: 0.75rem; min-width: 28px; }
+    .btn-small { padding: 4px 10px; font-size: 0.75rem; line-height: 1.2; }
+
+    @keyframes rowSaved { from { background: #dcecd3; } to { background: transparent; } }
+    .row-saved { animation: rowSaved 1.2s ease; }
+    @media (prefers-reduced-motion: reduce) { .row-saved { animation: none; } }
+
+    .lock-box {
+      max-width: 380px;
+      margin: 48px auto;
+      padding: 24px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .lock-box h4 { margin: 0 0 8px; font-size: 1.05rem; color: var(--header-bg); }
+    .lock-box p { margin: 0 0 16px; font-size: 0.82rem; line-height: 1.4; color: #555; }
+    .lock-box label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      display: block;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    .lock-box input {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+    .lock-box button { width: 100%; }
+
+    .thumb {
+      width: 44px; height: 44px; object-fit: cover; display: block; cursor: zoom-in;
+      border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
+    }
+    .thumb-empty {
+      width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+      border: 1px dashed var(--line); border-radius: var(--radius); color: #aaa; font-size: 0.8rem;
+    }
+    form.stock-form .photo-field { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    form.stock-form .photo-field label { margin: 0; }
+    form.stock-form .photo-field input[type=file] { width: auto; max-width: 260px; padding: 4px; background: #fff; }
+    .photo-preview { width: 64px; height: 64px; object-fit: cover; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    .lightbox { max-width: 560px; }
+    .lightbox img { display: block; max-width: 100%; max-height: 65vh; margin: 0 auto 12px; border-radius: var(--radius); }
+
+    @media (max-width: 850px) {
+      form.stock-form { grid-template-columns: 1fr 1fr; }
+      form.stock-form .span2 { grid-column: span 2; }
+      .tabs { padding: 0 12px; }
+    }
   </style>
 </head>
 <body>
@@ -354,6 +513,14 @@
       <p>Tuan Biomass Plant Operations</p>
     </div>
   </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button type="button" class="tab-btn active" id="tab-logbook" role="tab" aria-selected="true" onclick="switchTab('logbook')">Logbook</button>
+    <button type="button" class="tab-btn" id="tab-stock" role="tab" aria-selected="false" onclick="switchTab('stock')">Stock on Hand</button>
+    <button type="button" class="tab-btn" id="tab-stocktake" role="tab" aria-selected="false" onclick="switchTab('stocktake')">🔒 Stocktake</button>
+  </nav>
+
+  <div class="view active" id="view-logbook">
 
   <div class="toolbar">
     <input type="text" id="searchInput" placeholder="Search events, notes or operators..." oninput="renderTable()">
@@ -392,6 +559,10 @@
         <label for="ghPath">File Path</label>
         <input type="text" id="ghPath" value="data/logbook.json">
       </div>
+      <div>
+        <label for="ghStockPath">Stock File Path</label>
+        <input type="text" id="ghStockPath" value="data/stock.json">
+      </div>
     </div>
     
     <div class="gh-actions">
@@ -400,7 +571,7 @@
       <button class="btn-git" onclick="pullFromGithub()">Pull from GitHub</button>
       <button class="btn-git" onclick="pushToGithub()">Push to GitHub</button>
       <label class="checkbox-row">
-        <input type="checkbox" id="autoSync" onchange="toggleAutoSync()" checked> Auto-push on new entries
+        <input type="checkbox" id="autoSync" onchange="toggleAutoSync()" checked> Auto-push on new entries &amp; stock changes
       </label>
     </div>
 
@@ -485,6 +656,179 @@
       System: GreCon Spark Extinguishing & Fire Protection | Tuan Biomass Plant Ops
     </div>
   </footer>
+  </div><!-- /view-logbook -->
+
+  <!-- ===== STOCK ON HAND ===== -->
+  <div class="view" id="view-stock">
+    <div class="toolbar">
+      <input type="text" id="stockSearch" placeholder="Search code, item, category or location..." oninput="renderStockOnHand()">
+      <select id="stockCategoryFilter" onchange="renderStockOnHand()">
+        <option value="ALL">All Categories</option>
+      </select>
+      <label class="checkbox-row">
+        <input type="checkbox" id="stockLowOnly" onchange="renderStockOnHand()"> Low or out of stock only
+      </label>
+      <div class="spacer"></div>
+      <button class="btn-ghost" onclick="pullStockFromGithub()">Refresh</button>
+      <button class="btn-ghost" onclick="exportStockToExcel()">Export Excel</button>
+    </div>
+
+    <div class="stat-row" id="stockStats"></div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 64px;">Photo</th>
+            <th style="width: 110px;">Code</th>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Location</th>
+            <th class="col-num">On Hand</th>
+            <th class="col-num">Min Level</th>
+            <th style="width: 80px;">Status</th>
+            <th style="width: 110px;">Last Counted</th>
+          </tr>
+        </thead>
+        <tbody id="stockTableBody"></tbody>
+      </table>
+    </div>
+    <div id="stockEmpty" class="empty-state" style="display: none;"></div>
+
+    <footer>
+      <div>Items: <span class="count-badge" id="stockCount">0</span></div>
+      <div>System: GreCon Spark Extinguishing & Fire Protection | Tuan Biomass Plant Ops</div>
+    </footer>
+  </div>
+
+  <!-- ===== STOCKTAKE (PASSWORD PROTECTED) ===== -->
+  <div class="view" id="view-stocktake">
+
+    <div id="stocktakeLocked">
+      <form class="lock-box" onsubmit="unlockStocktake(event)">
+        <h4 id="lockTitle">Stocktake is locked</h4>
+        <p id="lockHelp">Enter the stocktake password to add and manage stock.</p>
+        <label for="lockPw">Password</label>
+        <input type="password" id="lockPw" autocomplete="current-password" required>
+        <div id="lockConfirmRow" style="display: none;">
+          <label for="lockPw2">Confirm password</label>
+          <input type="password" id="lockPw2" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn-primary" id="lockBtn">Unlock</button>
+      </form>
+    </div>
+
+    <div id="stockManagePanel" style="display: none;">
+      <div class="toolbar">
+        <input type="text" id="takeSearch" placeholder="Search code, item, category or location..." oninput="renderStocktake()">
+        <div class="spacer"></div>
+        <button class="btn-ghost" onclick="document.getElementById('stockImportFile').click()">Import Excel / CSV</button>
+        <input type="file" id="stockImportFile" accept=".xlsx,.xls,.csv" style="display: none;" onchange="importStockFile(event)">
+        <button class="btn-ghost" onclick="exportStockToExcel()">Export Excel</button>
+        <button class="btn-git" onclick="pullStockFromGithub()">Pull</button>
+        <button class="btn-git" onclick="pushStockToGithub()">Push</button>
+        <button class="btn-ghost" onclick="togglePwPanel()">Change Password</button>
+        <button class="btn-primary" onclick="lockStocktake()">🔒 Lock</button>
+      </div>
+
+      <div class="gh-panel" id="pwPanel">
+        <h3>Change Stocktake Password</h3>
+        <div class="gh-grid">
+          <div>
+            <label for="pwCurrent">Current password</label>
+            <input type="password" id="pwCurrent" autocomplete="current-password">
+          </div>
+          <div>
+            <label for="pwNew">New password (6+ characters)</label>
+            <input type="password" id="pwNew" autocomplete="new-password">
+          </div>
+          <div>
+            <label for="pwNew2">Confirm new password</label>
+            <input type="password" id="pwNew2" autocomplete="new-password">
+          </div>
+        </div>
+        <div class="gh-actions">
+          <button class="btn-primary" onclick="changeStockPassword()">Save Password</button>
+          <button class="btn-ghost" onclick="togglePwPanel()">Cancel</button>
+        </div>
+      </div>
+
+      <form class="stock-form" id="stockForm" onsubmit="saveStockItem(event)">
+        <div>
+          <label for="stCode">Code</label>
+          <input type="text" id="stCode" placeholder="Part no.">
+        </div>
+        <div class="span2">
+          <label for="stName">Item</label>
+          <input type="text" id="stName" placeholder="Item name..." required>
+        </div>
+        <div>
+          <label for="stCategory">Category</label>
+          <input type="text" id="stCategory" list="categoryList" placeholder="e.g. Sensors">
+        </div>
+        <div>
+          <label for="stLocation">Location</label>
+          <input type="text" id="stLocation" list="locationList" placeholder="e.g. Store A">
+        </div>
+        <div>
+          <label for="stUnit">Unit</label>
+          <input type="text" id="stUnit" list="unitList" placeholder="ea">
+        </div>
+        <div>
+          <label for="stQty">On Hand</label>
+          <input type="number" id="stQty" min="0" step="any" value="0" required>
+        </div>
+        <div>
+          <label for="stMin">Min Level</label>
+          <input type="number" id="stMin" min="0" step="any" value="0">
+        </div>
+        <div class="form-actions span2">
+          <button type="submit" class="btn-primary" id="stSaveBtn">Add Item</button>
+          <button type="button" class="btn-ghost" id="stCancelBtn" style="display: none;" onclick="cancelStockEdit()">Cancel</button>
+        </div>
+        <div class="photo-field">
+          <label for="stPhoto">Photo</label>
+          <img class="photo-preview" id="photoPreview" alt="Item photo preview" style="display: none;">
+          <input type="file" id="stPhoto" accept="image/*" onchange="onPhotoChosen(this)">
+          <button type="button" class="btn-ghost btn-small" id="photoRemoveBtn" style="display: none;" onclick="removePhoto()">Remove photo</button>
+        </div>
+        <datalist id="categoryList"></datalist>
+        <datalist id="locationList"></datalist>
+        <datalist id="unitList">
+          <option value="ea"></option><option value="box"></option><option value="pack"></option>
+          <option value="pair"></option><option value="set"></option><option value="m"></option>
+          <option value="L"></option><option value="kg"></option>
+        </datalist>
+      </form>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 64px;">Photo</th>
+              <th style="width: 100px;">Code</th>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th class="col-num">Min</th>
+              <th class="col-num" style="width: 230px;">Count</th>
+              <th style="width: 80px;">Status</th>
+              <th style="width: 110px;">Last Counted</th>
+              <th style="width: 130px; text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="stocktakeTableBody"></tbody>
+        </table>
+      </div>
+      <div id="stocktakeEmpty" class="empty-state" style="display: none;"></div>
+
+      <footer>
+        <div>Items: <span class="count-badge" id="stocktakeCount">0</span></div>
+        <div>System: GreCon Spark Extinguishing & Fire Protection | Tuan Biomass Plant Ops</div>
+      </footer>
+    </div>
+  </div>
+
 </div>
 
 <!-- Delete Confirmation Modal -->
@@ -496,6 +840,27 @@
       <button class="btn-ghost" onclick="closeDeleteModal()">Cancel</button>
       <button class="btn-primary" id="confirmDeleteBtn">Delete Entry</button>
     </div>
+  </div>
+</div>
+
+<!-- Stock Delete Confirmation Modal -->
+<div class="modal-overlay" id="stockDeleteModal">
+  <div class="modal-box">
+    <h4>Delete Stock Item</h4>
+    <p>Permanently delete <strong id="stockDeleteName"></strong> from stock?</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeStockDeleteModal()">Cancel</button>
+      <button class="btn-primary" id="confirmStockDeleteBtn">Delete Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Photo Lightbox -->
+<div class="modal-overlay" id="lightboxModal" onclick="closeLightbox()">
+  <div class="modal-box lightbox">
+    <img id="lightboxImg" alt="">
+    <p id="lightboxCaption" style="margin: 0 0 12px; text-align: center; font-weight: bold;"></p>
+    <div class="modal-actions"><button class="btn-ghost" onclick="closeLightbox()">Close</button></div>
   </div>
 </div>
 
@@ -758,6 +1123,7 @@
     document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
     document.getElementById('ghBranch').value = localStorage.getItem('gh_branch') || 'main';
     document.getElementById('ghPath').value = localStorage.getItem('gh_path') || 'data/logbook.json';
+    document.getElementById('ghStockPath').value = localStorage.getItem('gh_stock_path') || 'data/stock.json';
     
     const storedAutoSync = localStorage.getItem('gh_autosync');
     document.getElementById('autoSync').checked = storedAutoSync === null ? true : (storedAutoSync === 'true');
@@ -768,6 +1134,7 @@
     localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
     localStorage.setItem('gh_branch', document.getElementById('ghBranch').value.trim());
     localStorage.setItem('gh_path', document.getElementById('ghPath').value.trim());
+    localStorage.setItem('gh_stock_path', document.getElementById('ghStockPath').value.trim() || 'data/stock.json');
     showToast('GitHub settings saved.', 'ok');
   }
 
@@ -884,13 +1251,919 @@
     }
   }
 
+  /* =====================================================
+     STOCK ON HAND / STOCKTAKE
+     ===================================================== */
+  function loadJSON(key, fallback) {
+    try {
+      const v = JSON.parse(localStorage.getItem(key));
+      return v === null || v === undefined ? fallback : v;
+    } catch (e) { return fallback; }
+  }
+
+  let stockItems = loadJSON('grecon_stock', []);
+  let stockPw = loadJSON('grecon_stock_pw', null);   // { scheme, salt, hash, updated }
+  let stockUnlocked = false;
+  let editingStockId = null;
+  let pendingStockDeleteId = null;
+  let currentTab = 'logbook';
+  let idleTimer = null;
+  let stockPushTimer = null;
+  let lastStockPull = 0;
+  const IDLE_LOCK_MS = 10 * 60 * 1000;
+
+  const esc = v => escapeHtml(String(v === null || v === undefined ? '' : v));
+  const todayStr = () => new Date().toLocaleDateString('en-CA'); // local YYYY-MM-DD
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+  function cleanNum(v, fallback = 0) {
+    const n = parseFloat(v);
+    return isFinite(n) && n >= 0 ? Math.round(n * 1000) / 1000 : fallback;
+  }
+
+  function liveStock() {
+    return stockItems
+      .filter(i => i && !i.deleted)
+      .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  }
+
+  function stockStatus(i) {
+    const qty = Number(i.qty) || 0, min = Number(i.min) || 0;
+    if (qty <= 0) return 'OUT';
+    if (min > 0 && qty <= min) return 'LOW';
+    return 'OK';
+  }
+
+  function matchesStockSearch(i, term) {
+    if (!term) return true;
+    return [i.code, i.name, i.category, i.location].some(f => String(f || '').toLowerCase().includes(term));
+  }
+
+  function saveStockLocally(rerenderStocktake = true) {
+    localStorage.setItem('grecon_stock', JSON.stringify(stockItems));
+    localStorage.setItem('grecon_stock_pw', JSON.stringify(stockPw));
+    renderStockOnHand();
+    if (rerenderStocktake) renderStocktake();
+  }
+
+  function mergeStock(local, remote) {
+    const map = new Map();
+    [...local, ...remote].forEach(item => {
+      if (!item || !/^[\w-]+$/.test(String(item.id))) return;
+      const existing = map.get(item.id);
+      if (!existing || (item.updated || 0) > (existing.updated || 0)) {
+        if (item.img && !/^[\w-]+$/.test(String(item.img))) item = { ...item, img: '' };
+        map.set(item.id, item);
+      }
+    });
+    return Array.from(map.values());
+  }
+
+  /* ---------- Tabs ---------- */
+  function switchTab(tab, updateHash = true) {
+    currentTab = tab;
+    ['logbook', 'stock', 'stocktake'].forEach(t => {
+      document.getElementById('view-' + t).classList.toggle('active', t === tab);
+      const btn = document.getElementById('tab-' + t);
+      btn.classList.toggle('active', t === tab);
+      btn.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+    });
+    if (updateHash) history.replaceState(null, '', '#' + tab);
+    if (tab !== 'logbook' && Date.now() - lastStockPull > 30000) pullStockFromGithub(true);
+    if (tab === 'stocktake') {
+      updateStocktakeLock();
+      const pw = document.getElementById('lockPw');
+      if (!stockUnlocked && pw) pw.focus();
+    }
+  }
+
+  /* ---------- Stocktake password ---------- */
+  function bytesToHex(bytes) {
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Non-cryptographic fallback, only used when the page is not on https (crypto.subtle unavailable)
+  function cyrb53(str, seed = 0) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+  }
+
+  async function hashPassword(pw, salt, scheme) {
+    if (scheme === 'p1') {
+      if (!(window.crypto && crypto.subtle)) throw new Error('secure-context');
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveBits']);
+      const bits = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt: enc.encode(salt), iterations: 100000, hash: 'SHA-256' }, key, 256);
+      return bytesToHex(new Uint8Array(bits));
+    }
+    return cyrb53(salt + pw);
+  }
+
+  async function makePassword(pw) {
+    const salt = bytesToHex(crypto.getRandomValues(new Uint8Array(12)));
+    const scheme = (window.crypto && crypto.subtle) ? 'p1' : 'f1';
+    return { scheme, salt, hash: await hashPassword(pw, salt, scheme), updated: Date.now() };
+  }
+
+  async function verifyPassword(pw) {
+    return (await hashPassword(pw, stockPw.salt, stockPw.scheme)) === stockPw.hash;
+  }
+
+  function updateStocktakeLock() {
+    document.getElementById('stocktakeLocked').style.display = stockUnlocked ? 'none' : 'block';
+    document.getElementById('stockManagePanel').style.display = stockUnlocked ? 'block' : 'none';
+    document.getElementById('tab-stocktake').innerText = (stockUnlocked ? '🔓' : '🔒') + ' Stocktake';
+
+    const hasPw = !!stockPw;
+    document.getElementById('lockTitle').innerText = hasPw ? 'Stocktake is locked' : 'Set a stocktake password';
+    document.getElementById('lockHelp').innerText = hasPw
+      ? 'Enter the stocktake password to add and manage stock.'
+      : 'No password has been set yet. Choose one (6+ characters) to protect the stocktake page.';
+    document.getElementById('lockConfirmRow').style.display = hasPw ? 'none' : 'block';
+    document.getElementById('lockPw2').required = !hasPw;
+    document.getElementById('lockPw').autocomplete = hasPw ? 'current-password' : 'new-password';
+    document.getElementById('lockBtn').innerText = hasPw ? 'Unlock' : 'Set Password & Unlock';
+  }
+
+  async function unlockStocktake(e) {
+    e.preventDefault();
+    const pw = document.getElementById('lockPw').value;
+    try {
+      if (!stockPw) {
+        const pw2 = document.getElementById('lockPw2').value;
+        // A password may already exist on GitHub from another device
+        await pullStockFromGithub(true);
+        if (stockPw) {
+          updateStocktakeLock();
+          showToast('A stocktake password already exists. Enter it to unlock.', 'error');
+          return;
+        }
+        if (pw.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
+        if (pw !== pw2) { showToast('Passwords do not match.', 'error'); return; }
+        stockPw = await makePassword(pw);
+        saveStockLocally();
+        pushStockToGithub(true);
+      } else if (!(await verifyPassword(pw))) {
+        await new Promise(r => setTimeout(r, 700));
+        showToast('Incorrect password.', 'error');
+        document.getElementById('lockPw').select();
+        return;
+      }
+    } catch (err) {
+      showToast('Password check needs a secure (https) page.', 'error');
+      return;
+    }
+    stockUnlocked = true;
+    document.getElementById('lockPw').value = '';
+    document.getElementById('lockPw2').value = '';
+    updateStocktakeLock();
+    renderStocktake();
+    resetIdle();
+    showToast('Stocktake unlocked.', 'ok');
+  }
+
+  function lockStocktake() {
+    stockUnlocked = false;
+    clearTimeout(idleTimer);
+    document.getElementById('pwPanel').classList.remove('open');
+    document.getElementById('stocktakeTableBody').innerHTML = '';
+    cancelStockEdit();
+    updateStocktakeLock();
+  }
+
+  function resetIdle() {
+    clearTimeout(idleTimer);
+    if (!stockUnlocked) return;
+    idleTimer = setTimeout(() => {
+      lockStocktake();
+      showToast('Stocktake locked after 10 minutes of inactivity.', 'ok');
+    }, IDLE_LOCK_MS);
+  }
+
+  function togglePwPanel() {
+    const panel = document.getElementById('pwPanel');
+    panel.classList.toggle('open');
+    ['pwCurrent', 'pwNew', 'pwNew2'].forEach(id => document.getElementById(id).value = '');
+    if (panel.classList.contains('open')) document.getElementById('pwCurrent').focus();
+  }
+
+  async function changeStockPassword() {
+    const cur = document.getElementById('pwCurrent').value;
+    const n1 = document.getElementById('pwNew').value;
+    const n2 = document.getElementById('pwNew2').value;
+    try {
+      if (!(await verifyPassword(cur))) { showToast('Current password is incorrect.', 'error'); return; }
+      if (n1.length < 6) { showToast('New password must be at least 6 characters.', 'error'); return; }
+      if (n1 !== n2) { showToast('New passwords do not match.', 'error'); return; }
+      stockPw = await makePassword(n1);
+      saveStockLocally(false);
+      togglePwPanel();
+      showToast('Stocktake password changed.', 'ok');
+      pushStockToGithub(true);
+    } catch (err) {
+      showToast('Password check needs a secure (https) page.', 'error');
+    }
+  }
+
+  /* ---------- Stock on hand (read-only) ---------- */
+  function renderStockOnHand() {
+    const all = liveStock();
+    const sel = document.getElementById('stockCategoryFilter');
+    const current = sel.value;
+    const cats = [...new Set(all.map(i => String(i.category || '').trim()).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b));
+    sel.innerHTML = '<option value="ALL">All Categories</option>' +
+      cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    sel.value = cats.includes(current) ? current : 'ALL';
+
+    const term = document.getElementById('stockSearch').value.toLowerCase().trim();
+    const lowOnly = document.getElementById('stockLowOnly').checked;
+    const catFilter = sel.value;
+
+    const low = all.filter(i => stockStatus(i) === 'LOW').length;
+    const out = all.filter(i => stockStatus(i) === 'OUT').length;
+    document.getElementById('stockStats').innerHTML =
+      `<div class="stat"><strong>${all.length}</strong>items</div>` +
+      `<div class="stat warn"><strong>${low}</strong>low stock</div>` +
+      `<div class="stat bad"><strong>${out}</strong>out of stock</div>`;
+
+    const filtered = all.filter(i =>
+      matchesStockSearch(i, term) &&
+      (catFilter === 'ALL' || String(i.category || '').trim() === catFilter) &&
+      (!lowOnly || stockStatus(i) !== 'OK'));
+
+    document.getElementById('stockCount').innerText = filtered.length;
+    const tbody = document.getElementById('stockTableBody');
+    const empty = document.getElementById('stockEmpty');
+    tbody.innerHTML = '';
+
+    if (filtered.length === 0) {
+      empty.style.display = 'block';
+      empty.innerText = all.length === 0
+        ? 'No stock items yet. Unlock the Stocktake tab to add stock.'
+        : 'No items match the current search or filters.';
+      return;
+    }
+    empty.style.display = 'none';
+
+    filtered.forEach(i => {
+      const status = stockStatus(i);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${thumbHtml(i)}</td>
+        <td class="col-date">${esc(i.code || '-')}</td>
+        <td class="col-operator">${esc(i.name)}</td>
+        <td>${esc(i.category || '-')}</td>
+        <td>${esc(i.location || '-')}</td>
+        <td class="col-qty">${esc(i.qty)} ${esc(i.unit || '')}</td>
+        <td class="col-num">${esc(i.min || 0)}</td>
+        <td><span class="tag tag-${status}">${status}</span></td>
+        <td class="col-date">${esc(i.lastCounted || '-')}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ---------- Stocktake (manage stock) ---------- */
+  function renderStocktake() {
+    if (!stockUnlocked) return;
+    const all = liveStock();
+    const term = document.getElementById('takeSearch').value.toLowerCase().trim();
+    const filtered = all.filter(i => matchesStockSearch(i, term));
+
+    const uniq = key => [...new Set(all.map(i => String(i[key] || '').trim()).filter(Boolean))].sort();
+    document.getElementById('categoryList').innerHTML = uniq('category').map(v => `<option value="${esc(v)}"></option>`).join('');
+    document.getElementById('locationList').innerHTML = uniq('location').map(v => `<option value="${esc(v)}"></option>`).join('');
+
+    document.getElementById('stocktakeCount').innerText = filtered.length;
+    const tbody = document.getElementById('stocktakeTableBody');
+    const empty = document.getElementById('stocktakeEmpty');
+    tbody.innerHTML = '';
+
+    if (filtered.length === 0) {
+      empty.style.display = 'block';
+      empty.innerText = all.length === 0
+        ? 'No stock items yet. Add your first item above, or import an Excel / CSV list.'
+        : 'No items match the current search.';
+      return;
+    }
+    empty.style.display = 'none';
+
+    filtered.forEach(i => {
+      const status = stockStatus(i);
+      const tr = document.createElement('tr');
+      tr.id = 'row-' + i.id;
+      tr.innerHTML = `
+        <td>${thumbHtml(i)}</td>
+        <td class="col-date">${esc(i.code || '-')}</td>
+        <td class="col-operator">${esc(i.name)}</td>
+        <td>${esc(i.category || '-')}</td>
+        <td>${esc(i.location || '-')}</td>
+        <td class="col-num">${esc(i.min || 0)}</td>
+        <td>
+          <div class="count-cell">
+            <button type="button" class="btn-ghost qty-btn" aria-label="Decrease count" onclick="adjustCount('${i.id}', -1)">−</button>
+            <input type="number" class="count-input" id="cnt-${i.id}" min="0" step="any" value="${esc(i.qty)}"
+                   aria-label="Counted quantity for ${esc(i.name)}" onchange="setCount('${i.id}', this.value)">
+            <button type="button" class="btn-ghost qty-btn" aria-label="Increase count" onclick="adjustCount('${i.id}', 1)">+</button>
+            <span class="unit-label">${esc(i.unit || '')}</span>
+          </div>
+        </td>
+        <td id="st-${i.id}"><span class="tag tag-${status}">${status}</span></td>
+        <td class="col-date" id="lc-${i.id}">${esc(i.lastCounted || '-')}</td>
+        <td class="col-actions">
+          <button type="button" class="btn-ghost btn-small" onclick="editStockItem('${i.id}')">Edit</button>
+          <button type="button" class="btn-danger" onclick="confirmStockDelete('${i.id}')">Delete</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function setCount(id, value) {
+    const item = stockItems.find(i => i.id === id && !i.deleted);
+    if (!item) return;
+    const input = document.getElementById('cnt-' + id);
+    const qty = cleanNum(value, null);
+    if (qty === null) {
+      showToast('Enter a count of 0 or more.', 'error');
+      if (input) input.value = item.qty;
+      return;
+    }
+    if (input) input.value = qty;
+    if (qty === item.qty) return;
+
+    item.qty = qty;
+    item.lastCounted = todayStr();
+    item.updated = Date.now();
+    saveStockLocally(false);
+
+    // Update the row in place so focus stays put for fast counting
+    const status = stockStatus(item);
+    const st = document.getElementById('st-' + id);
+    const lc = document.getElementById('lc-' + id);
+    const row = document.getElementById('row-' + id);
+    if (st) st.innerHTML = `<span class="tag tag-${status}">${status}</span>`;
+    if (lc) lc.innerText = item.lastCounted;
+    if (row) {
+      row.classList.remove('row-saved');
+      void row.offsetWidth;
+      row.classList.add('row-saved');
+    }
+    scheduleStockPush();
+  }
+
+  function adjustCount(id, delta) {
+    const item = stockItems.find(i => i.id === id && !i.deleted);
+    if (!item) return;
+    const input = document.getElementById('cnt-' + id);
+    const cur = cleanNum(input ? input.value : item.qty, item.qty);
+    setCount(id, Math.max(0, cur + delta));
+  }
+
+  function saveStockItem(e) {
+    e.preventDefault();
+    const f = id => document.getElementById(id).value.trim();
+    const qty = cleanNum(f('stQty'), null);
+    const min = cleanNum(f('stMin') || '0', null);
+    if (qty === null || min === null) {
+      showToast('On hand and min level must be 0 or more.', 'error');
+      return;
+    }
+    const code = f('stCode');
+    const duplicate = code && stockItems.some(i =>
+      !i.deleted && i.id !== editingStockId && String(i.code || '').toLowerCase() === code.toLowerCase());
+    if (duplicate) {
+      showToast('Another item already uses that code.', 'error');
+      return;
+    }
+
+    const fields = { code, name: f('stName'), category: f('stCategory'), location: f('stLocation'), unit: f('stUnit'), qty, min };
+    const keepCategory = fields.category, keepLocation = fields.location;
+
+    if (editingStockId) {
+      const item = stockItems.find(i => i.id === editingStockId);
+      if (!item) { cancelStockEdit(); return; }
+      if (item.qty !== qty) item.lastCounted = todayStr();
+      Object.assign(item, fields, { updated: Date.now() });
+      applyPendingPhoto(item);
+      showToast('Item updated.', 'ok');
+      cancelStockEdit();
+    } else {
+      const created = { id: newId(), ...fields, lastCounted: todayStr(), updated: Date.now() };
+      stockItems.push(created);
+      applyPendingPhoto(created);
+      showToast('Item added.', 'ok');
+      cancelStockEdit();
+      // Keep category and location so consecutive items are quick to enter
+      document.getElementById('stCategory').value = keepCategory;
+      document.getElementById('stLocation').value = keepLocation;
+      document.getElementById('stCode').focus();
+    }
+    saveStockLocally();
+    scheduleStockPush();
+  }
+
+  function editStockItem(id) {
+    const item = stockItems.find(i => i.id === id && !i.deleted);
+    if (!item) return;
+    editingStockId = id;
+    document.getElementById('stCode').value = item.code || '';
+    document.getElementById('stName').value = item.name || '';
+    document.getElementById('stCategory').value = item.category || '';
+    document.getElementById('stLocation').value = item.location || '';
+    document.getElementById('stUnit').value = item.unit || '';
+    document.getElementById('stQty').value = item.qty;
+    document.getElementById('stMin').value = item.min || 0;
+    document.getElementById('stSaveBtn').innerText = 'Save Item';
+    pendingPhoto = { mode: 'keep', data: null };
+    updatePhotoUi();
+    document.getElementById('stCancelBtn').style.display = '';
+    const form = document.getElementById('stockForm');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('stName').focus();
+  }
+
+  function cancelStockEdit() {
+    editingStockId = null;
+    document.getElementById('stockForm').reset();
+    document.getElementById('stSaveBtn').innerText = 'Add Item';
+    document.getElementById('stCancelBtn').style.display = 'none';
+    pendingPhoto = { mode: 'keep', data: null };
+    updatePhotoUi();
+  }
+
+  function confirmStockDelete(id) {
+    const item = stockItems.find(i => i.id === id && !i.deleted);
+    if (!item) return;
+    pendingStockDeleteId = id;
+    document.getElementById('stockDeleteName').innerText = item.name;
+    document.getElementById('stockDeleteModal').classList.add('active');
+  }
+
+  function closeStockDeleteModal() {
+    pendingStockDeleteId = null;
+    document.getElementById('stockDeleteModal').classList.remove('active');
+  }
+
+  document.getElementById('confirmStockDeleteBtn').addEventListener('click', function() {
+    const item = stockItems.find(i => i.id === pendingStockDeleteId);
+    if (item) {
+      item.deleted = true;            // kept as a tombstone so the delete syncs to other devices
+      item.img = '';
+      removeImage(item.id);
+      item.updated = Date.now();
+      if (editingStockId === item.id) cancelStockEdit();
+      saveStockLocally();
+      scheduleStockPush();
+      showToast('Item deleted.', 'ok');
+    }
+    closeStockDeleteModal();
+  });
+
+  /* ---------- Excel export / import ---------- */
+  function exportStockToExcel() {
+    const items = liveStock();
+    if (items.length === 0) {
+      showToast('No stock available to export.', 'error');
+      return;
+    }
+    const rows = items.map(i => ({
+      Code: i.code || '',
+      Item: i.name,
+      Category: i.category || '',
+      Location: i.location || '',
+      Unit: i.unit || '',
+      'On Hand': i.qty,
+      'Min Level': i.min || 0,
+      Status: stockStatus(i),
+      'Last Counted': i.lastCounted || ''
+    }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Stock on Hand');
+    XLSX.writeFile(wb, `GreCon_Stock_${todayStr()}.xlsx`);
+    showToast('Exported stock spreadsheet.', 'ok');
+  }
+
+  function importStockFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+        let added = 0, updated = 0, skipped = 0;
+
+        rows.forEach(raw => {
+          const row = {};
+          Object.keys(raw).forEach(k => { row[k.toLowerCase().replace(/[^a-z0-9]/g, '')] = raw[k]; });
+          const pick = (...keys) => {
+            for (const k of keys) {
+              if (row[k] !== undefined && String(row[k]).trim() !== '') return String(row[k]).trim();
+            }
+            return '';
+          };
+
+          const name = pick('item', 'name', 'itemname', 'description');
+          if (!name) { skipped++; return; }
+          const code = pick('code', 'itemcode', 'partno', 'partnumber', 'sku');
+          const qtyRaw = pick('onhand', 'qty', 'quantity', 'count', 'stock');
+          const minRaw = pick('minlevel', 'min', 'minimum', 'reorderlevel', 'reorder');
+          const qty = qtyRaw === '' ? null : cleanNum(qtyRaw, null);
+          const min = minRaw === '' ? null : cleanNum(minRaw, null);
+          const category = pick('category', 'group'), location = pick('location', 'bin', 'shelf'), unit = pick('unit', 'uom');
+
+          const existing = stockItems.find(i => !i.deleted && (code
+            ? String(i.code || '').toLowerCase() === code.toLowerCase()
+            : String(i.name).toLowerCase() === name.toLowerCase()));
+
+          if (existing) {
+            existing.name = name;
+            if (code) existing.code = code;
+            if (category) existing.category = category;
+            if (location) existing.location = location;
+            if (unit) existing.unit = unit;
+            if (min !== null) existing.min = min;
+            if (qty !== null && qty !== existing.qty) { existing.qty = qty; existing.lastCounted = todayStr(); }
+            existing.updated = Date.now();
+            updated++;
+          } else {
+            stockItems.push({
+              id: newId(), code, name, category, location, unit,
+              qty: qty === null ? 0 : qty, min: min === null ? 0 : min,
+              lastCounted: todayStr(), updated: Date.now()
+            });
+            added++;
+          }
+        });
+
+        saveStockLocally();
+        scheduleStockPush();
+        showToast(`Import done: ${added} added, ${updated} updated, ${skipped} skipped.`, 'ok');
+      } catch (err) {
+        showToast('Could not read that file. Use .xlsx or .csv with an Item column.', 'error');
+      }
+      event.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  /* ---------- GitHub sync for stock ---------- */
+  function stockGhConfig() {
+    return {
+      token: localStorage.getItem('gh_token'),
+      repo: localStorage.getItem('gh_repo'),
+      branch: localStorage.getItem('gh_branch') || 'main',
+      path: localStorage.getItem('gh_stock_path') || 'data/stock.json'
+    };
+  }
+
+  function applyRemoteStock(remote) {
+    if (!remote || typeof remote !== 'object') return;
+    if (Array.isArray(remote.items)) stockItems = mergeStock(stockItems, remote.items);
+    const rp = remote.password;
+    if (rp && typeof rp.hash === 'string' && typeof rp.salt === 'string' &&
+        (!stockPw || (rp.updated || 0) > (stockPw.updated || 0))) {
+      stockPw = rp;
+    }
+    saveStockLocally();
+    updateStocktakeLock();
+  }
+
+  async function pullStockFromGithub(isSilent = false) {
+    const { token, repo, branch, path } = stockGhConfig();
+    if (!repo) {
+      if (!isSilent) showToast('Add your repository under GitHub & Backup Settings on the Logbook tab.', 'error');
+      return;
+    }
+    lastStockPull = Date.now();
+    if (!isSilent) showToast('Pulling stock from GitHub...', 'ok');
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`, {
+        headers: token ? { 'Authorization': `token ${token}` } : {},
+        cache: 'no-store'
+      });
+      if (res.status === 404) {
+        if (!isSilent) showToast('No stock file on GitHub yet. Use Push to create it.', 'error');
+        return;
+      }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (!isSilent) showToast(`GitHub Pull Failed: ${err.message || res.status}`, 'error');
+        return;
+      }
+      const info = await res.json();
+      applyRemoteStock(JSON.parse(base64ToUtf8(info.content.replace(/\n/g, ''))));
+      pullImagesFromGithub();
+      if (!isSilent) showToast('Stock updated from GitHub.', 'ok');
+    } catch (e) {
+      if (!isSilent) showToast(`GitHub API Error: ${e.message}`, 'error');
+    }
+  }
+
+  let stockPushing = false, stockPushAgain = false;
+  async function pushStockToGithub(isAuto = false) {
+    if (stockPushing) { stockPushAgain = true; return; }   // overlapping pushes would upload twice
+    stockPushing = true;
+    try { await pushStockCore(isAuto); } finally { stockPushing = false; }
+    if (stockPushAgain) { stockPushAgain = false; return pushStockToGithub(true); }
+  }
+
+  async function pushStockCore(isAuto = false) {
+    const { token, repo, branch, path } = stockGhConfig();
+    if (!token || !repo) {
+      if (!isAuto) showToast('Missing GitHub token or repository setting.', 'error');
+      return;
+    }
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+    const headers = { 'Authorization': `token ${token}` };
+    if (!isAuto) showToast('Pushing stock to GitHub...', 'ok');
+
+    try {
+      let sha = null;
+      const getRes = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers, cache: 'no-store' });
+      if (getRes.ok) {
+        const info = await getRes.json();
+        sha = info.sha;
+        applyRemoteStock(JSON.parse(base64ToUtf8(info.content.replace(/\n/g, ''))));
+      } else if (getRes.status !== 404) {
+        const err = await getRes.json().catch(() => ({}));
+        showToast(`GitHub Push Failed: ${err.message || getRes.status}`, 'error');
+        return;
+      }
+
+      const failedImages = await pushImagesToGithub({ repo, branch, path }, headers);
+
+      const payload = { version: 1, password: stockPw, items: stockItems };
+      const body = {
+        message: `Update stock [${new Date().toISOString()}]`,
+        content: utf8ToBase64(JSON.stringify(payload, null, 2)),
+        branch: branch
+      };
+      if (sha) body.sha = sha;
+
+      const putRes = await fetch(url, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (putRes.ok && failedImages > 0) {
+        showToast(`Stock pushed, but ${failedImages} photo(s) failed to upload. Push again to retry.`, 'error');
+      } else if (putRes.ok) {
+        showToast(isAuto ? 'Stock auto-synced to GitHub.' : 'Stock pushed to GitHub.', 'ok');
+      } else {
+        const err = await putRes.json().catch(() => ({}));
+        showToast(`GitHub Push Failed: ${err.message || putRes.status}`, 'error');
+      }
+    } catch (e) {
+      showToast(`GitHub API Error: ${e.message}`, 'error');
+    }
+  }
+
+  function scheduleStockPush() {
+    if (!document.getElementById('autoSync').checked) return;
+    clearTimeout(stockPushTimer);
+    stockPushTimer = setTimeout(() => pushStockToGithub(true), 1500);
+  }
+
+  /* ---------- Item photos ---------- */
+  const imgCache = new Map();                       // item id -> { v, data (JPEG data URL) }
+  let imgPushed = loadJSON('grecon_img_pushed', {}); // item id -> version last uploaded to GitHub
+  let pendingPhoto = { mode: 'keep', data: null };   // keep | set | remove (applies on Save Item)
+  let imgPulling = false;
+
+  const imgDbPromise = new Promise(resolve => {
+    try {
+      const req = indexedDB.open('grecon_stock_images', 1);
+      req.onupgradeneeded = () => req.result.createObjectStore('images');
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    } catch (e) { resolve(null); }
+  });
+
+  async function idbWrite(fn) {
+    const db = await imgDbPromise;
+    if (!db) return;
+    try {
+      const tx = db.transaction('images', 'readwrite');
+      fn(tx.objectStore('images'));
+    } catch (e) { /* storage unavailable: image stays in memory for this session */ }
+  }
+
+  async function loadImagesFromDb() {
+    const db = await imgDbPromise;
+    if (!db) return;
+    await new Promise(res => {
+      try {
+        const tx = db.transaction('images', 'readonly');
+        const st = tx.objectStore('images');
+        const keys = st.getAllKeys(), vals = st.getAll();
+        tx.oncomplete = () => { keys.result.forEach((k, i) => imgCache.set(k, vals.result[i])); res(); };
+        tx.onerror = tx.onabort = () => res();
+      } catch (e) { res(); }
+    });
+  }
+
+  function setImage(id, v, data) {
+    imgCache.set(id, { v, data });
+    idbWrite(st => st.put({ v, data }, id));
+  }
+
+  function removeImage(id) {
+    imgCache.delete(id);
+    delete imgPushed[id];
+    localStorage.setItem('grecon_img_pushed', JSON.stringify(imgPushed));
+    idbWrite(st => st.delete(id));
+  }
+
+  function resizeImage(file, max = 480) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * scale));
+        c.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg', 0.78));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad image')); };
+      img.src = url;
+    });
+  }
+
+  async function onPhotoChosen(input) {
+    const file = input.files[0];
+    if (!file) return;
+    try {
+      pendingPhoto = { mode: 'set', data: await resizeImage(file) };
+      updatePhotoUi();
+    } catch (e) {
+      showToast('Could not read that image. Try a JPG or PNG.', 'error');
+    }
+    input.value = '';
+  }
+
+  function removePhoto() {
+    pendingPhoto = { mode: 'remove', data: null };
+    updatePhotoUi();
+  }
+
+  function updatePhotoUi() {
+    const prev = document.getElementById('photoPreview');
+    const rm = document.getElementById('photoRemoveBtn');
+    let src = '';
+    if (pendingPhoto.mode === 'set') {
+      src = pendingPhoto.data;
+    } else if (pendingPhoto.mode === 'keep' && editingStockId) {
+      const it = stockItems.find(i => i.id === editingStockId);
+      const im = it && it.img && imgCache.get(it.id);
+      if (im) src = im.data;
+    }
+    if (src) prev.src = src; else prev.removeAttribute('src');
+    prev.style.display = src ? '' : 'none';
+    rm.style.display = src ? '' : 'none';
+  }
+
+  function applyPendingPhoto(item) {
+    if (pendingPhoto.mode === 'set') {
+      const v = Date.now().toString(36);
+      item.img = v;
+      setImage(item.id, v, pendingPhoto.data);
+    } else if (pendingPhoto.mode === 'remove') {
+      item.img = '';
+      removeImage(item.id);
+    }
+  }
+
+  function thumbHtml(i) {
+    const im = i.img && imgCache.get(i.id);
+    if (im && im.v === i.img) {
+      return `<img class="thumb" src="${im.data}" alt="${esc(i.name)}" loading="lazy" onclick="openLightbox('${i.id}')">`;
+    }
+    return i.img
+      ? '<div class="thumb-empty" title="Photo not downloaded yet">…</div>'
+      : '<div class="thumb-empty">–</div>';
+  }
+
+  function openLightbox(id) {
+    const item = stockItems.find(i => i.id === id);
+    const im = item && imgCache.get(id);
+    if (!im) return;
+    document.getElementById('lightboxImg').src = im.data;
+    document.getElementById('lightboxCaption').innerText = item.name;
+    document.getElementById('lightboxModal').classList.add('active');
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightboxModal').classList.remove('active');
+  }
+
+  function refreshStockViews() {
+    renderStockOnHand();
+    renderStocktake();
+  }
+
+  function stockImgDir(path) {
+    const dir = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
+    return (dir ? dir + '/' : '') + 'stock-images/';
+  }
+
+  async function pushImagesToGithub(cfg, headers) {
+    let failed = 0;
+    const dir = stockImgDir(cfg.path);
+    for (const item of liveStock()) {
+      if (!item.img || imgPushed[item.id] === item.img) continue;
+      const im = imgCache.get(item.id);
+      if (!im || im.v !== item.img) continue;
+      const url = `https://api.github.com/repos/${cfg.repo}/contents/${dir}${item.id}.jpg`;
+      try {
+        let sha = null;
+        const g = await fetch(`${url}?ref=${encodeURIComponent(cfg.branch)}`, { headers, cache: 'no-store' });
+        if (g.ok) sha = (await g.json()).sha;
+        else if (g.status !== 404) { failed++; continue; }
+        const body = { message: `Stock image ${item.id}`, content: im.data.split(',')[1], branch: cfg.branch };
+        if (sha) body.sha = sha;
+        const p = await fetch(url, {
+          method: 'PUT',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (p.ok) {
+          imgPushed[item.id] = item.img;
+          localStorage.setItem('grecon_img_pushed', JSON.stringify(imgPushed));
+        } else failed++;
+      } catch (e) { failed++; }
+    }
+    return failed;
+  }
+
+  async function pullImagesFromGithub() {
+    if (imgPulling) return;
+    const cfg = stockGhConfig();
+    if (!cfg.repo) return;
+    const need = liveStock().filter(i => {
+      const im = imgCache.get(i.id);
+      return i.img && !(im && im.v === i.img);
+    });
+    if (need.length === 0) return;
+    imgPulling = true;
+    let got = 0;
+    try {
+      for (const item of need) {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${cfg.repo}/contents/${stockImgDir(cfg.path)}${item.id}.jpg?ref=${encodeURIComponent(cfg.branch)}`,
+            { headers: cfg.token ? { 'Authorization': `token ${cfg.token}` } : {}, cache: 'no-store' });
+          if (!res.ok) continue;
+          const info = await res.json();
+          const b64 = String(info.content || '').replace(/\s/g, '');
+          if (!/^[A-Za-z0-9+/=]+$/.test(b64)) continue;
+          setImage(item.id, item.img, 'data:image/jpeg;base64,' + b64);
+          imgPushed[item.id] = item.img;
+          got++;
+          if (got % 5 === 0) refreshStockViews();
+        } catch (e) { /* skip this image */ }
+      }
+      localStorage.setItem('grecon_img_pushed', JSON.stringify(imgPushed));
+      if (got > 0) refreshStockViews();
+    } finally {
+      imgPulling = false;
+    }
+  }
+
+  function initStock() {
+    const hash = (location.hash || '').replace('#', '');
+    lastStockPull = Date.now(); // init() pulls once; avoid a duplicate pull from switchTab
+    renderStockOnHand();
+    updateStocktakeLock();
+    switchTab(['stock', 'stocktake'].includes(hash) ? hash : 'logbook', false);
+    ['click', 'keydown', 'touchstart'].forEach(ev =>
+      document.addEventListener(ev, resetIdle, { passive: true }));
+    loadImagesFromDb().then(() => { refreshStockViews(); pullImagesFromGithub(); });
+  }
+
   // Initial Startup
   async function init() {
     setFormDefaults();
     loadGithubSettings();
     renderTable();
+    initStock();
     // Auto-pull from GitHub on page open
     await pullFromGithub(true);
+    await pullStockFromGithub(true);
   }
 
   init();
