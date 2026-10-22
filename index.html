@@ -496,6 +496,25 @@
     .lightbox { max-width: 560px; }
     .lightbox img { display: block; max-width: 100%; max-height: 65vh; margin: 0 auto 12px; border-radius: var(--radius); }
 
+    form.entry-form .stock-used-row {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    form.entry-form .su-add { display: flex; gap: 8px; flex-wrap: wrap; }
+    form.entry-form .su-add select { width: auto; min-width: 260px; max-width: 100%; }
+    form.entry-form .su-add input { width: 90px; }
+    .su-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin: 8px 6px 0 0; padding: 2px 4px 2px 10px;
+      font-size: 0.78rem; background: #e3ecde; border: 1px solid var(--line); border-radius: 12px;
+    }
+    .su-chip button { padding: 0 6px; background: transparent; color: var(--accent); font-size: 0.8rem; }
+    .su-line { margin-top: 4px; font-size: 0.75rem; font-weight: bold; color: var(--green); }
+
     @media (max-width: 850px) {
       form.stock-form { grid-template-columns: 1fr 1fr; }
       form.stock-form .span2 { grid-column: span 2; }
@@ -620,7 +639,16 @@
       <label for="entryComments">Comments / Notes</label>
       <textarea id="entryComments" placeholder="Additional observations..."></textarea>
     </div>
-    <div>
+    <div class="stock-used-row">
+      <div>
+        <label for="suItem">Stock Used (optional)</label>
+        <div class="su-add">
+          <select id="suItem"><option value="">No stock items set up yet</option></select>
+          <input type="number" id="suQty" min="0" step="any" value="1" aria-label="Quantity used">
+          <button type="button" class="btn-ghost" onclick="addStockUsed()">+ Add</button>
+        </div>
+        <div id="suChips"></div>
+      </div>
       <button type="submit" class="btn-primary">Add Entry</button>
     </div>
   </form>
@@ -836,6 +864,9 @@
   <div class="modal-box">
     <h4>Confirm Deletion</h4>
     <p>Are you sure you want to permanently delete this logbook entry?</p>
+    <label class="checkbox-row" id="restoreRow" style="display: none; margin: -8px 0 18px;">
+      <input type="checkbox" id="restoreStock" checked> Return the stock used to inventory
+    </label>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeDeleteModal()">Cancel</button>
       <button class="btn-primary" id="confirmDeleteBtn">Delete Entry</button>
@@ -893,6 +924,8 @@
 
   function addEntry(e) {
     e.preventDefault();
+    // An item picked but not yet added with "+ Add" still counts
+    if (document.getElementById('suItem').value && !addStockUsed()) return;
     const newEntry = {
       id: Date.now().toString(),
       date: document.getElementById('entryDate').value,
@@ -900,17 +933,22 @@
       operator: document.getElementById('entryOperator').value.trim(),
       type: document.getElementById('entryType').value,
       event: document.getElementById('entryEvent').value.trim(),
-      comments: document.getElementById('entryComments').value.trim()
+      comments: document.getElementById('entryComments').value.trim(),
+      stockUsed: buildStockUsed()
     };
 
     logData.unshift(newEntry);
     saveLogsLocally();
+    const shortItems = adjustStockForUsage(newEntry.stockUsed, -1);
+    pendingStockUsed = [];
+    renderStockUsedChips();
+    if (shortItems.length) showToast(`Used more than recorded on hand: ${shortItems.join(', ')}. Stock set to 0.`, 'error');
 
     document.getElementById('entryOperator').value = '';
     document.getElementById('entryEvent').value = '';
     document.getElementById('entryComments').value = '';
     setFormDefaults();
-    showToast('Entry added successfully.', 'ok');
+    if (!shortItems.length) showToast(newEntry.stockUsed.length ? 'Entry added and stock updated.' : 'Entry added successfully.', 'ok');
 
     if (document.getElementById('autoSync').checked) {
       pushToGithub(true);
@@ -929,6 +967,9 @@
       }
     }
     pendingDeleteId = id;
+    const entry = logData.find(item => item.id === id);
+    document.getElementById('restoreRow').style.display = entry && (entry.stockUsed || []).length ? 'flex' : 'none';
+    document.getElementById('restoreStock').checked = true;
     document.getElementById('deleteModal').classList.add('active');
   }
 
@@ -939,6 +980,10 @@
 
   document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
     if (pendingDeleteId) {
+      const gone = logData.find(item => item.id === pendingDeleteId);
+      if (gone && (gone.stockUsed || []).length && document.getElementById('restoreStock').checked) {
+        adjustStockForUsage(gone.stockUsed, 1);
+      }
       logData = logData.filter(item => item.id !== pendingDeleteId);
       saveLogsLocally();
       showToast('Entry deleted.', 'ok');
@@ -961,6 +1006,7 @@
       const matchesSearch = item.event.toLowerCase().includes(search) ||
                             item.comments.toLowerCase().includes(search) ||
                             (item.operator && item.operator.toLowerCase().includes(search)) ||
+                            stockUsedText(item).toLowerCase().includes(search) ||
                             item.date.includes(search);
       const matchesType = typeFilter === 'ALL' || item.type === typeFilter;
       return matchesSearch && matchesType;
@@ -982,7 +1028,7 @@
         <td class="col-time">${escapeHtml(item.time)}</td>
         <td class="col-operator">${escapeHtml(item.operator || '-')}</td>
         <td><span class="tag tag-${item.type}">${item.type}</span></td>
-        <td class="col-event">${escapeHtml(item.event)}</td>
+        <td class="col-event">${escapeHtml(item.event)}${stockUsedHtml(item)}</td>
         <td class="col-comments">${escapeHtml(item.comments || '-')}</td>
         <td class="col-actions">
           <button class="btn-danger" onclick="confirmDelete('${item.id}')">Delete</button>
@@ -1019,7 +1065,8 @@
       Operator: item.operator || '-',
       Type: item.type,
       'Event Details': item.event,
-      Comments: item.comments
+      Comments: item.comments,
+      'Stock Used': stockUsedText(item)
     }));
 
     const ws = XLSX.utils.json_to_sheet(exportData);
@@ -1476,6 +1523,7 @@
   /* ---------- Stock on hand (read-only) ---------- */
   function renderStockOnHand() {
     const all = liveStock();
+    refreshStockUsedOptions(all);
     const sel = document.getElementById('stockCategoryFilter');
     const current = sel.value;
     const cats = [...new Set(all.map(i => String(i.category || '').trim()).filter(Boolean))]
@@ -2142,6 +2190,77 @@
     } finally {
       imgPulling = false;
     }
+  }
+
+  /* ---------- Stock used (logbook entries) ---------- */
+  let pendingStockUsed = [];   // [{ id, qty }] chosen on the entry form, applied when the entry is added
+
+  function stockUsedText(entry) {
+    return (entry.stockUsed || [])
+      .map(u => `${u.name} × ${u.qty}${u.unit ? ' ' + u.unit : ''}`)
+      .join(', ');
+  }
+
+  function stockUsedHtml(entry) {
+    const t = stockUsedText(entry);
+    return t ? `<div class="su-line">Stock used: ${esc(t)}</div>` : '';
+  }
+
+  function refreshStockUsedOptions(items = liveStock()) {
+    const sel = document.getElementById('suItem');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">${items.length ? 'Select stock item...' : 'No stock items set up yet'}</option>` +
+      items.map(i => `<option value="${esc(i.id)}">${esc(i.name)}${i.code ? ' (' + esc(i.code) + ')' : ''}, ${esc(i.qty)} ${esc(i.unit || '')} on hand</option>`).join('');
+    sel.value = items.some(i => i.id === cur) ? cur : '';
+  }
+
+  function renderStockUsedChips() {
+    document.getElementById('suChips').innerHTML = pendingStockUsed.map(p => {
+      const it = stockItems.find(i => i.id === p.id);
+      return `<span class="su-chip">${esc(it ? it.name : '(removed item)')} × ${esc(p.qty)} ${esc(it ? it.unit || '' : '')}` +
+             `<button type="button" aria-label="Remove ${esc(it ? it.name : 'item')}" onclick="removeStockUsed('${p.id}')">✕</button></span>`;
+    }).join('');
+  }
+
+  function addStockUsed() {
+    const id = document.getElementById('suItem').value;
+    if (!id) { showToast('Pick a stock item first.', 'error'); return false; }
+    const qty = cleanNum(document.getElementById('suQty').value, null);
+    if (qty === null || qty <= 0) { showToast('Enter a quantity above 0.', 'error'); return false; }
+    const existing = pendingStockUsed.find(p => p.id === id);
+    if (existing) existing.qty = Math.round((existing.qty + qty) * 1000) / 1000;
+    else pendingStockUsed.push({ id, qty });
+    document.getElementById('suItem').value = '';
+    document.getElementById('suQty').value = '1';
+    renderStockUsedChips();
+    return true;
+  }
+
+  function removeStockUsed(id) {
+    pendingStockUsed = pendingStockUsed.filter(p => p.id !== id);
+    renderStockUsedChips();
+  }
+
+  // Snapshot of the chosen items, stored on the log entry so history survives later edits to stock
+  function buildStockUsed() {
+    return pendingStockUsed.map(p => {
+      const it = stockItems.find(i => i.id === p.id && !i.deleted);
+      return it ? { id: it.id, code: it.code || '', name: it.name, unit: it.unit || '', qty: p.qty } : null;
+    }).filter(Boolean);
+  }
+
+  function adjustStockForUsage(list, direction) {   // direction: -1 deduct, +1 return
+    const short = [];
+    list.forEach(u => {
+      const it = stockItems.find(i => i.id === u.id && !i.deleted);
+      if (!it) return;
+      if (direction < 0 && u.qty > it.qty) short.push(it.name);
+      it.qty = Math.max(0, Math.round((it.qty + direction * u.qty) * 1000) / 1000);
+      it.updated = Date.now();
+    });
+    if (list.length) { saveStockLocally(); scheduleStockPush(); }
+    return short;
   }
 
   function initStock() {
