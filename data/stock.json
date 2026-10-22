@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "password": {
+    "scheme": "p1",
+    "salt": "93e8bffea35c4bb774f98acf",
+    "hash": "34fb084b0674bd9ad6af44c696b62ca95f0344fab6a6958712dc3d81a0e18f29",
+    "updated": 1792630570247
+  },
+  "items": []
+}
