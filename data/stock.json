@@ -32,6 +32,19 @@
       "lastCounted": "2026-10-22",
       "updated": 1792631082130,
       "img": "mviu9fgy"
+    },
+    {
+      "id": "mviuqmwt860k",
+      "code": "FM 1/8",
+      "name": "Spark detector FM 1/8",
+      "category": "SPARK DETECTORS",
+      "location": "TEST ROOM",
+      "unit": "",
+      "qty": 3,
+      "min": 2,
+      "lastCounted": "2026-10-22",
+      "updated": 1792631884925,
+      "img": "mviuqmwt"
     }
   ]
 }
