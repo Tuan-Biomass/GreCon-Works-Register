@@ -519,6 +519,29 @@
       form.stock-form { grid-template-columns: 1fr 1fr; }
       form.stock-form .span2 { grid-column: span 2; }
       .tabs { padding: 0 12px; }
+      .tab-btn { padding: 12px 10px; font-size: 0.78rem; }
+    }
+
+    /* ===== Fill the page ===== */
+    body { padding: 12px; }
+    .sheet {
+      max-width: 2200px;
+      min-height: calc(100vh - 24px);
+      display: flex;
+      flex-direction: column;
+    }
+    .view.active { display: flex; flex-direction: column; flex: 1; }
+    #stockManagePanel { flex: 1; flex-direction: column; }
+    footer { margin-top: auto; }
+    table { font-size: clamp(0.85rem, 0.78rem + 0.2vw, 1rem); }
+    .toolbar input[type="text"] { flex: 1 1 260px; max-width: 520px; }
+    @media (min-width: 851px) {
+      form.entry-form { grid-template-columns: 140px 100px 150px 130px 1.5fr 1.5fr; }
+      header, .toolbar, form.entry-form, form.stock-form, .stat-row, .gh-panel { padding-left: 32px; padding-right: 32px; }
+      .tabs { padding: 0 32px; }
+      thead th, tbody td { padding-left: 16px; padding-right: 16px; }
+      thead th:first-child, tbody td:first-child { padding-left: 32px; }
+      thead th:last-child, tbody td:last-child { padding-right: 32px; }
     }
   </style>
 </head>
@@ -1426,7 +1449,7 @@
 
   function updateStocktakeLock() {
     document.getElementById('stocktakeLocked').style.display = stockUnlocked ? 'none' : 'block';
-    document.getElementById('stockManagePanel').style.display = stockUnlocked ? 'block' : 'none';
+    document.getElementById('stockManagePanel').style.display = stockUnlocked ? 'flex' : 'none';
     document.getElementById('tab-stocktake').innerText = (stockUnlocked ? '🔓' : '🔒') + ' Stocktake';
 
     const hasPw = !!stockPw;
