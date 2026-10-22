@@ -58,6 +58,19 @@
       "lastCounted": "2026-10-22",
       "updated": 1792631991551,
       "img": "mviusx6n"
+    },
+    {
+      "id": "mviuy3hsods4",
+      "code": "KELEX",
+      "name": "RED JUNCTION BOX",
+      "category": "MISC",
+      "location": "TEST ROOM",
+      "unit": "",
+      "qty": 1,
+      "min": 1,
+      "lastCounted": "2026-10-22",
+      "updated": 1792632233008,
+      "img": "mviuy3hs"
     }
   ]
 }
