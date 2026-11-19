@@ -1,5 +1,24 @@
 [
   {
+    "id": "1795131160974",
+    "date": "2026-11-19",
+    "time": "09:31",
+    "operator": "Tim",
+    "type": "FAULT",
+    "event": "Control line inconsistent (Zone 3 Hammermill Discharge)",
+    "comments": "Under investigation",
+    "stockUsed": []
+  },
+  {
+    "id": "1792094683285",
+    "date": "2026-10-15",
+    "time": "06:04",
+    "operator": "Tim Rohner",
+    "type": "SERVICE",
+    "event": "Replaced Lower sawdust detector",
+    "comments": ""
+  },
+  {
     "id": "1792094662622",
     "date": "2026-10-15",
     "time": "06:03",
