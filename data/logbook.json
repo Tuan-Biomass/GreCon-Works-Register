@@ -6,8 +6,9 @@
     "operator": "Tim",
     "type": "FAULT",
     "event": "Control line inconsistent (Zone 3 Hammermill Discharge)",
-    "comments": "Under investigation",
-    "stockUsed": []
+    "comments": "Under investigation waiting for feedback from Simon Brown",
+    "stockUsed": [],
+    "updated": 1795134250315
   },
   {
     "id": "1792094683285",
