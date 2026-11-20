@@ -672,7 +672,10 @@
         </div>
         <div id="suChips"></div>
       </div>
-      <button type="submit" class="btn-primary">Add Entry</button>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-ghost" id="cancelEditBtn" style="display:none;" onclick="cancelEdit()">Cancel</button>
+        <button type="submit" class="btn-primary" id="entrySubmitBtn">Add Entry</button>
+      </div>
     </div>
   </form>
 
@@ -686,7 +689,7 @@
           <th style="width: 100px;">Type</th>
           <th>Event Details</th>
           <th>Comments</th>
-          <th style="width: 90px; text-align: right;">Actions</th>
+          <th style="width: 150px; text-align: right;">Actions</th>
         </tr>
       </thead>
       <tbody id="logTableBody">
@@ -940,13 +943,16 @@
   function mergeLogs(local, remote) {
     const map = new Map();
     [...local, ...remote].forEach(item => {
-      if (item && item.id) map.set(item.id, item);
+      if (!item || !item.id) return;
+      const ex = map.get(item.id);
+      if (!ex || (item.updated || 0) >= (ex.updated || 0)) map.set(item.id, item);
     });
     return Array.from(map.values()).sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
   }
 
   function addEntry(e) {
     e.preventDefault();
+    if (editingLogId) { saveEdit(); return; }
     // An item picked but not yet added with "+ Add" still counts
     if (document.getElementById('suItem').value && !addStockUsed()) return;
     const newEntry = {
@@ -978,6 +984,59 @@
     }
   }
 
+  /* Edit existing entries */
+  let editingLogId = null;
+
+  function editEntry(id) {
+    const entry = logData.find(item => item.id === id);
+    if (!entry) return;
+    editingLogId = id;
+    document.getElementById('entryDate').value = entry.date;
+    document.getElementById('entryTime').value = entry.time;
+    document.getElementById('entryOperator').value = entry.operator || '';
+    document.getElementById('entryType').value = entry.type;
+    document.getElementById('entryEvent').value = entry.event;
+    document.getElementById('entryComments').value = entry.comments || '';
+    pendingStockUsed = [];
+    renderStockUsedChips();
+    // Stock already deducted for this entry is not changed by editing
+    document.querySelector('.su-add').style.display = 'none';
+    document.querySelector('label[for="suItem"]').innerText = (entry.stockUsed || []).length
+      ? 'Stock used: ' + stockUsedText(entry) + ' (not editable)'
+      : 'Stock used: none (not editable)';
+    document.getElementById('entrySubmitBtn').innerText = 'Save Changes';
+    document.getElementById('cancelEditBtn').style.display = '';
+    document.getElementById('logForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('entryEvent').focus();
+  }
+
+  function saveEdit() {
+    const entry = logData.find(item => item.id === editingLogId);
+    if (!entry) { cancelEdit(); return; }
+    entry.date = document.getElementById('entryDate').value;
+    entry.time = document.getElementById('entryTime').value;
+    entry.operator = document.getElementById('entryOperator').value.trim();
+    entry.type = document.getElementById('entryType').value;
+    entry.event = document.getElementById('entryEvent').value.trim();
+    entry.comments = document.getElementById('entryComments').value.trim();
+    entry.updated = Date.now();
+    saveLogsLocally();
+    cancelEdit();
+    showToast('Entry updated.', 'ok');
+    if (document.getElementById('autoSync').checked) pushToGithub(true);
+  }
+
+  function cancelEdit() {
+    editingLogId = null;
+    ['entryOperator', 'entryEvent', 'entryComments'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('entryType').value = 'NOTE';
+    setFormDefaults();
+    document.querySelector('.su-add').style.display = '';
+    document.querySelector('label[for="suItem"]').innerText = 'Stock Used (optional)';
+    document.getElementById('entrySubmitBtn').innerText = 'Add Entry';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+  }
+
   /* Protected Deletion Logic */
   function confirmDelete(id) {
     if (!githubPanelUnlocked) {
@@ -1007,6 +1066,7 @@
       if (gone && (gone.stockUsed || []).length && document.getElementById('restoreStock').checked) {
         adjustStockForUsage(gone.stockUsed, 1);
       }
+      if (editingLogId === pendingDeleteId) cancelEdit();
       logData = logData.filter(item => item.id !== pendingDeleteId);
       saveLogsLocally();
       showToast('Entry deleted.', 'ok');
@@ -1051,9 +1111,10 @@
         <td class="col-time">${escapeHtml(item.time)}</td>
         <td class="col-operator">${escapeHtml(item.operator || '-')}</td>
         <td><span class="tag tag-${item.type}">${item.type}</span></td>
-        <td class="col-event">${escapeHtml(item.event)}${stockUsedHtml(item)}</td>
+        <td class="col-event">${escapeHtml(item.event)}${stockUsedHtml(item)}${item.updated ? `<div class="su-line" style="color:#777;font-weight:normal;">Edited ${escapeHtml(new Date(item.updated).toLocaleString())}</div>` : ''}</td>
         <td class="col-comments">${escapeHtml(item.comments || '-')}</td>
         <td class="col-actions">
+          <button class="btn-ghost btn-small" onclick="editEntry('${item.id}')">Edit</button>
           <button class="btn-danger" onclick="confirmDelete('${item.id}')">Delete</button>
         </td>
       `;
